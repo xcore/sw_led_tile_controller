@@ -1,0 +1,22 @@
+XMOS LED Config Application
+--------------------
+
+VERSION: 9.10.0
+
+XMOS have created an example PC-side applcation for configuring nodes of LED Video Walls.
+
+INSTALLATION AND RUNNING:
+
+-Windows-
+
+To build MPlayer on Windows, MinGW or Cygwin is required. Download and install MinGW and MSYS from "http://www.mingw.org". 
+
+-All Platforms-
+
+cd src
+make
+
+DIRECTORY STRUCTURE:
+
+->bin               LED Config binaries
+->src               LED Config Source

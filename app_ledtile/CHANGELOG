@@ -1,0 +1,47 @@
+XMOS LED REFERENCE DESIGN CHANGELOG
+----------------------------
+
+15th October 2010 - 10.4.1 version
+
+   * Fixed a build issue, where the distributed package contained temporary files from a previous build
+
+18th August 2010 - 10.4.0 version
+
+   * MBI5030 rev C support
+   * Updates for 10.4 development tools
+   * Updates in build system (fixes XDE mkdir issue)
+   * HEX option removed (was legacy)
+
+5th November 2009 - 9.10.1 version
+
+   * TFTP upgrade bug fix
+   * Chanabs bug fix
+
+5th October 2009 - 9.10.0 version
+
+   * Tools 9.9.0 support added
+
+14th July 2009 - 9.6.1 version
+
+   * Tools 9.7.0 support added
+
+24th June 2009 - 9.6.0 version
+
+   * Non-pwm driving moved to BCM
+   * Long-term stability memory leak fixed
+   * New Makefile system for cross-platform compatibility
+
+19th May 2009 - 9.5.0 version
+
+   * MBI5026 improvements, 4-WAY Soft-pwm
+   * Improvements for 9.5.0 tools, streaming chanends etc
+
+22nd April 2009 - 9.4.0 version
+
+   * Bugfixs
+   * Bootloader support
+   * MBI5026 (non-PWM driver) support added   
+
+27th March 2009 - 9.3.0 version
+
+   * Initial version. MBI5030 support only.

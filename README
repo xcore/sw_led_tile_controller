@@ -1,0 +1,77 @@
+LED Reference Design
+--------------------
+
+VERSION: 10.4.1
+
+DESCRIPTION:
+
+This directory contains the source for the LED Reference Design found on the
+XC-3 LED Tile Controller card.
+
+The root directory structure is:
+
+bootloader - Source and Binary files for XC-3 Bootloader 
+doc        - Application Note directory
+ledconfig  - Source and Binary files for Host-side LED Configuration application
+ledtile    - Source and Binary files for XC-3 LED Tile Application
+mplayer    - Source and Binary files for Host-side MPlayer UDP modified application
+
+REQUIRED TOOLS:
+
+XMOS Desktop Development Tools 10.4 or above
+
+REQUIRED HARDWARE:
+
+Demonstration programs run on XC-3 Development Kit.
+
+INSTALLATION AND RUNNING THE DEMO (XDE):
+
+----XCore Source----
+To install, open the XDE Eclipse IDE and perform the following steps:
+
+   * Select the "Import" item from the "File" menu
+   * Select "General" -> "Existing Projects into Workspace" and click "Next"
+   * Click on "Browse" next to "Select archive file" and select the
+     zipfile 
+   * Make sure the projects you want to import is ticks in the
+     "Projects:" list
+   * Click on "Finish"
+
+Enable one of LED driver options in src/led.h. Currently supported drivers
+are listed in the LED DRIVERS section below. Supplied binary is for MBI5030
+rev C.
+
+To build, select the project in the Project Explorer window and click
+on build icon.
+
+To run, click on the run icon. To configure the project to run on a
+particular device or in the simulator click on the drop down arrow
+next to the run icon and select "Run Configurations"
+
+INSTALLATION AND RUNNING THE DEMO (COMMAND LINE):
+
+From an enviroment that can access the XMOS Desktop Development tools.
+Unzip the zipfile and from the 'ledtile' directory run:
+  
+xmake all
+
+INSTALLATION AND RUNNING THE HOST TOOLS (WINDOWS):
+
+MinGW is required to build "ledconfig" or "mplayer.
+
+Please refer to the README.TXT file in the "ledconfig" and "mplayer" directories.
+
+INSTALLATION AND RUNNING THE HOST TOOLS (MACOS):
+
+Please refer to the README.TXT file in the "ledconfig" and "mplayer" directories.
+
+LED DRIVERS
+
+MBI5024              supported as MBI5026
+MBI5026              uncomment any of the MBI5026 defines in src/led.h
+MBI5030              uncomment any of the MBI5030 defines in src/led.h
+MBI5030 rev C        uncomment the SINGLE_INDOOR_16x32_MBI5030C define in src/led.h
+
+What is MBI5030 rev C - last letter of second identifier on chip markings is 'C'.
+
+The reference design comes preset to MBI5030 rev C.
