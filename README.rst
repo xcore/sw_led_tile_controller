@@ -25,6 +25,7 @@ To Do
 * Documentation in the code.
 * LED Driver Hardware schematics (at least not found yet)
 * Reusing more existing xcore repositories (e.g. for ethernet)
+* Restructuring the source a bit
 
 Firmware Overview
 =================
