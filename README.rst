@@ -13,12 +13,18 @@ LED Tile Controller
 Key Features
 ============
 
-* <Bullet pointed list of features>
+* Driving serial (currently) LED drivers with gamma correction, singel LED level adjustment
+* Internal double buffered pixel buffer
+* Updateable via ethernet
+* Configurable via ethernet
 
 To Do
 =====
 
-* <Bullet pointed list of missing features>
+* Documentation, documentation, documentation
+* Documentation in the code.
+* LED Driver Hardware schematics (at least not found yet)
+* Reusing more existing xcore repositories (e.g. for ethernet)
 
 Firmware Overview
 =================
