@@ -29,9 +29,9 @@
 
 // Ethernet Ports and Clock Blocks
 // -----------------------
-clock clk_mii_ref                               = on stdcore[2]: XS1_CLKBLK_REF;
-clock clk_mii_rx_0                              = on stdcore[2]: XS1_CLKBLK_1;
-clock clk_mii_tx_0                              = on stdcore[2]: XS1_CLKBLK_2;
+on stdcore[2]: clock clk_mii_ref                = XS1_CLKBLK_REF;
+on stdcore[2]: clock clk_mii_rx_0               = XS1_CLKBLK_1;
+on stdcore[2]: clock clk_mii_tx_0                              = XS1_CLKBLK_2;
 in port p_mii_rxclk_0                           = PORT_ETH_RXCLK_0;
 buffered in port:32 p_mii_rxd_0                 = PORT_ETH_RXD_0;
 in port p_mii_rxdv_0                            = PORT_ETH_RXDV_0;
@@ -39,13 +39,13 @@ in port p_mii_rxer_0                            = PORT_ETH_RXER_0;
 in port p_mii_txclk_0                           = PORT_ETH_TXCLK_0;
 buffered out port:32 p_mii_txd_0                = PORT_ETH_TXD_0;
 out port p_mii_txen_0                           = PORT_ETH_TXEN_0;
-clock clk_smi                                   = on stdcore[2]: XS1_CLKBLK_3;
+on stdcore[2]: clock clk_smi                    = XS1_CLKBLK_3;
 port p_smi_mdio_0                               = PORT_ETH_MDIO_0;
 out port p_smi_mdc_0                            = PORT_ETH_MDC_0;
 out port p_mii_resetn                           = PORT_ETH_RST_N;
 
-clock clk_mii_rx_1                              = on stdcore[2]: XS1_CLKBLK_4;
-clock clk_mii_tx_1                              = on stdcore[2]: XS1_CLKBLK_5;
+on stdcore[2]: clock clk_mii_rx_1               = XS1_CLKBLK_4;
+on stdcore[2]: clock clk_mii_tx_1               = XS1_CLKBLK_5;
 in port p_mii_rxclk_1                           = PORT_ETH_RXCLK_1;
 buffered in port:32 p_mii_rxd_1                 = PORT_ETH_RXD_1;
 in port p_mii_rxdv_1                            = PORT_ETH_RXDV_1;
@@ -68,12 +68,12 @@ out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
 buffered out port:32 p_led_out_ltch             = PORT_LED_OUT_LATCH;
 buffered out port:32 p_led_out_oe               = PORT_LED_OUT_OE;
-clock b_led_clk                                 = on stdcore[0]: XS1_CLKBLK_2;
-clock b_led_data                                = on stdcore[0]: XS1_CLKBLK_3;
-clock b_led_gsclk                               = on stdcore[0]: XS1_CLKBLK_4;
-clock b_ref                                     = on stdcore[0]: XS1_CLKBLK_REF;
-clock b_flash_clk                               = on stdcore[0]: XS1_CLKBLK_1;
-clock b_flash_data                              = on stdcore[0]: XS1_CLKBLK_5;
+on stdcore[0]: clock b_led_clk                  = XS1_CLKBLK_2;
+on stdcore[0]: clock b_led_data                 = XS1_CLKBLK_3;
+on stdcore[0]: clock b_led_gsclk                = XS1_CLKBLK_4;
+on stdcore[0]: clock b_ref                      = XS1_CLKBLK_REF;
+on stdcore[0]: clock b_flash_clk                = XS1_CLKBLK_1;
+on stdcore[0]: clock b_flash_data               = XS1_CLKBLK_5;
 buffered in port:8 p_flash_miso                 = PORT_SPI_MISO;
 out port p_flash_ss                             = PORT_SPI_SS;
 buffered out port:32 p_flash_clk                = PORT_SPI_CLK;
