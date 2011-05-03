@@ -9,7 +9,15 @@
  * Build:   977cb8e0d3fefc67ac350c5f294ac65919b3ebdc
  * File:    bcmserver.xc
  *
+ * This module provides an implementation of the so called
+ * 'Binary Code Modulation' or 'Binary Angle Modulation'
+ * For more details on this technique check
+ * http://www.batsocks.co.uk/readme/art_bcm_1.htm
+ * Binary Code Modulation is a fast alternative to Puls Width modulation, only usable
+ * for frequency insensible devices - like LEDs.
  *
+ * For more details on this technique check
+ * http://www.batsocks.co.uk/readme/art_bcm_1.htm
  **/                                   
 #include "led.h"
 
@@ -28,17 +36,28 @@ void bcmserver(chanend cIn, chanend cOut)
     {
       for (int x=0; x<FRAME_WIDTH; x++)
       {
+    	//x1 is the module number
         int x1 = (x / MODULE_WIDTH);
+        //x2 is ??
         int x2 = ((x % MODULE_WIDTH) / (CHAIN_LOOPBACK_X*SCAN_RATE));
+        //x3 is the position according to the current scan rate(??)
         int x3 = (x % SCAN_RATE);
+        //so let's go through the columns
         for (int y=0; y<FRAME_HEIGHT; y++)
         {
+        	//and colors
           for (int c=0; c<3; c++)
           {
-            unsigned outval, outptr;
+        	//the current value
+            unsigned outval;
+            //the pointer in the output buffer
+            unsigned outptr;
+            //get the value for the pixel
             cIn :> outval;
             // Calculate position in the output array
+            //it starts at the y value
             outptr = y;
+            //navigate to the current module
             outptr += FRAME_HEIGHT * (NUM_MODULES_X - 1 - x1);
             outptr += FRAME_HEIGHT * NUM_MODULES_X * c;
             outptr += FRAME_HEIGHT * NUM_MODULES_X * 3 * x2;
