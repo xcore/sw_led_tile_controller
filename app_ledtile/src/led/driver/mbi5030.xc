@@ -164,8 +164,28 @@ void leddrive_mbi5030_init(buffered out port:32 p_led_out_r0, buffered out port:
 }
 
 
-// leddrivepins
-// Receive reformatted data and output to pins, with correct latch signals
+/*
+ * LED PIN DRIVER
+ *
+ * Physical SPI interface. Receive reformatted data and output to pins, with correct
+ * latch signals on the physical SPI interface.
+ * Controls latching and clock generation as well as register writes.
+ *
+ * Channels
+ * cln - Streaming bidirectional pixel/command input
+ *
+ * Port
+ * p_spi_r0 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_g0 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_b1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_r1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_g1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_b1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_addr - Output port, 4bit Port Width
+ * p_spi_clk - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_ltch - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_oe - 1bit Port Width
+ */
 #pragma unsafe arrays
 int leddrive_mbi5030_pins(streaming chanend c, 
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,

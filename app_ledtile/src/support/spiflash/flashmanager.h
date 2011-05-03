@@ -24,6 +24,20 @@
 #define SPI_FLASH_NEWGAMMA      3
 #define SPI_FLASH_READGAMMA     4
 
+/*
+ * SPI FLASH
+ *
+ * SPI Flash read and write. Loads Gamma LUTs off SPI flash and provides auto-update and firmware upgrade capability.
+ *
+ * Channels
+ * cln - bidirectional
+ *
+ * Port
+ * p_flash_miso - Buffered input port, 8bit transfer width, 1bit Port Width
+ * p_flash_mosi - Buffered output port, 8bit transfer width, 1bit Port Width
+ * p_flash_clk - Buffered output port, 32bit transfer width, 1bit Port Width
+ * p_flash_ss - Output port, 1bit Port Width
+ */
 #ifdef __XC__
 void spiFlash(chanend cSpiFlash,
     buffered in port:8 p_flash_miso, out port p_flash_ss, buffered out port:32 p_flash_clk, buffered out port:8 p_flash_mosi, clock b_flash_clk, clock b_flash_data);

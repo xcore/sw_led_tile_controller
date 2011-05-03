@@ -14,7 +14,17 @@
 #ifndef __PKTBUFFER_H__
 #define __PKTBUFFER_H__
 
-// Standard packet buffer FIFO
+/*
+ * COMMAND BUFFER
+ * Buffering FIFO for commands.
+ * Sinks commands such as gamma LUT changes, intensity value changes from
+ * the local server and buffers them on a packet-by-packet basis in
+ * a circular fifo for the LED driving thread to receive when ready.
+ *
+ * Channels
+ * cln - Streaming bidirectional command sink
+ * cOut - Streaming bidirectional command source
+ */
 
 void pktbuffer(chanend cIn, streaming chanend cOut);
 

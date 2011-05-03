@@ -22,6 +22,17 @@
 
 #define NUM_WATCHDOG_CHANS 3
 
+/*
+ * WATCHDOG
+ *
+ * Thread watchdog. Queries Processor-Switch and System-Switch control registers
+ * to check for deadlock and attempt local thread resets or system reset.
+ *
+ * Channels
+ * cWdogSwitch - Unidirectional input
+ * cWdogServer - Unidirectional input
+ * cWdogLed - Unidirectional input
+ */
 void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slowdown);
 
 #endif /*WATCHDOG_H_*/

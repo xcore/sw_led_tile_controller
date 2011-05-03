@@ -43,8 +43,17 @@
 #define PORT_XMOS          306
 //#define PER_PIXEL_ADJUSTMENT
 
-// ledreprocess
-// Load pixel data from buffer and apply gamma LUT and intensity colour correction
+/*
+ * COLOUR PROCESSING
+ *
+ * Colour processing of pixel data. Receives pixel data and commands from the
+ * buffers and applies Gamma and intensity correction.
+ *
+ * Channels
+ * cLedData - Streaming bidirectional pixel input
+ * cLedCmd - Streaming bidirectional command input
+ * cOut - Streaming bidirectional pixel output
+ */
 #ifdef __XC__
 void ledprocess_init();
 int ledprocess_commands(streaming chanend cLedCmd, streaming chanend cOut, int oeen);

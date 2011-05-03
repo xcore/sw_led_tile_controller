@@ -14,9 +14,21 @@
 #ifndef ETHSERVER_H_
 #define ETHSERVER_H_
 
-// Standard local ethernet server
-// Supports ICMP, ARP, TFTP
-// Also supports user-definable protocols with two user defined channels
+/*
+ *
+ * LOCAL SERVER
+ * Local Ethernet server. This thread deals with sorting and parsing of all local Ethernet frames.
+ * It responds to ICMP, ARP, parses LED video data and latch commands sent over UDP.
+ * LED specific data is forwarded to the next thread. Future implementations will include BOOTP/DHCP
+ * and TFTP for boot-from-Ethernet.
+ * Also supports user-definable protocols with two user defined channels
+ *
+ * Channels
+ * cRx - streaming bidirectional Data receive
+ * cTx - streaming bidirectional Data receive
+ * cLedData - Streaming bidirectional Pixel data output
+ * cLedCmd - Streaming bidirectional Command output
+ */
 void ethServer(streaming chanend cRx, chanend cTx, chanend cLedData, chanend cLedCmd, chanend cSpiFlash, chanend cWdog);
 
 #endif /*ETHSERVER_H_*/

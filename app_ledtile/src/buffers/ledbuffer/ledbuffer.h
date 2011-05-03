@@ -14,9 +14,16 @@
 #ifndef __LEDBUFFER_H__
 #define __LEDBUFFER_H__
 
-// ledbuffer
-// Frame buffer for pixel data
-// Uses "double-buffer" scheme with tearing prevention
+/*
+ * DATA BUFFER
+ * Double-buffered frame store. Frame buffer for storing pixel data.
+ * Sinks incoming data from the local server, and sources data to the LED driving threads.
+ * Supports frame turnaround without tearing.
+ *
+ * Channels
+ * cln - Streaming bidirectional pixel sink
+ * cOut -Streaming bidirectional pixel source
+ */
 
 #ifdef __XC__
 void ledbuffer(chanend cIn, streaming chanend cOut);

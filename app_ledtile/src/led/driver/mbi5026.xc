@@ -132,7 +132,27 @@ void processColumn(int x, unsigned tbuf[FRAME_HEIGHT], unsigned drivebuf[BCM_BIT
   }
 }
 
-
+/*
+ * LED PIN DRIVER
+ *
+ * Physical SPI interface. Sinks data from frame buffer, reformats and outputs on the physical SPI interface.
+ * Controls latching and clock generation as well as register writes.
+ *
+ * Channels
+ * cln - Streaming bidirectional pixel/command input
+ *
+ * Port
+ * p_spi_r0 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_g0 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_b1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_r1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_g1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_b1 - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_addr - Output port, 4bit Port Width
+ * p_spi_clk - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_ltch - Buffered output port, 32bit Transfer Width, 1bit Port Width
+ * p_spi_oe - 1bit Port Width
+ */
 void leddrivepins_mbi5026(streaming chanend c, 
     unsigned drivebuf[BCM_BITS][OUTPUT_BUF_SIZE],
     buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
