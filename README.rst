@@ -31,7 +31,7 @@ The XMOS solution is based on the XS1-G4 software defined silicon programmable d
 Mplayer plugin
 ==============
 
-For demonstration purposes, XMOS has written a plugin for the open-source media player ’MPlayer’ (http://www.mplayerhq.hu). 
+For demonstration purposes, XMOS has written a plugin for the open-source media player 'MPlayer' (http://www.mplayerhq.hu). 
 MPlayer supports most MPEG/VOB, AVI and many other media files. MPlayer can be compiled for Windows, Mac OSX and 
 various Linux distributions. Binaries for Windows 32bit and Mac OSX are included in the release.
 The purpose of the plugin is to segment the video stream into tiles, packetise the data, and output it over UDP.
