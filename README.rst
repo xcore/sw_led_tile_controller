@@ -51,7 +51,14 @@ To Do
 Firmware Overview
 =================
 
-<One or more paragraphs detailing the functionality of modules and apps in this repo>
+The root directory structure is:
+
+* bootloader - Source and Binary files for XC-3 Bootloader 
+* doc        - Application Note directory
+* ledconfig  - Source and Binary files for Host-side LED Configuration application
+* ledtile    - Source and Binary files for XC-3 LED Tile Application
+* mplayer    - Source and Binary files for Host-side MPlayer UDP modified application
+
 
 Known Issues
 ============
