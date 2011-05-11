@@ -11,16 +11,32 @@
  *
  *
  **/                                   
+
+/*
+ * send packets to the command buffer
+ *
+ * Channel
+ * c - the packet sink channel of the packet buffer
+ *
+ * len - the length of the data package
+ * data - the data package itself
+ *
+ * TODO this can fail if the FIFO is full - it should be returned
+ * TODO the package buffer handles the length as int - this may clash
+ */
 void sendPktData(chanend c, unsigned len, unsigned data[])
 {
   int response;
   master
   {
+	//send the package length
     c <: len;
+    //see if the buffer can handle the data
     c :> response;
-    
+    //if the buffer is ready
     if (!response)
     {
+      //send the data
       for (int i=0; i<len; i++)
       {
         c <: data[i];

@@ -14,6 +14,15 @@
 #ifndef PKTBUFFERCLIENT_H_
 #define PKTBUFFERCLIENT_H_
 
+/*
+ * send packets to the command buffer
+ *
+ * Channel
+ * c - the packet sink channel of the packet buffer
+ *
+ * len - the length of the data package
+ * data - the data package itself
+ */
 void sendPktData(chanend c, unsigned len, unsigned data[]);
 
 #endif /*PKTBUFFERCLIENT_H_*/

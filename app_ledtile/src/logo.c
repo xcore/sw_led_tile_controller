@@ -4,6 +4,8 @@
 // LICENSE.txt and at <http://github.xcore.com/>
 
 /**
+ * XMOS Logo Bitmap for inital display
+ *
  * Module:  LedRefDesign
  * Version: 10.4.1
  * Build:   977cb8e0d3fefc67ac350c5f294ac65919b3ebdc

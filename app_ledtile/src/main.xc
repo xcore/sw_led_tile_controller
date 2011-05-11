@@ -92,6 +92,7 @@ int main(void)
   par
   {
     // Threads constrained by I/O or latency requirements
+	//the internal 3 port ethernet switch
     on stdcore[2]: ethernetSwitch3Port(
         clk_mii_rx_0, p_mii_rxclk_0, p_mii_rxd_0, p_mii_rxdv_0, p_mii_rxer_0,
         clk_mii_tx_0, p_mii_txclk_0, p_mii_txd_0, p_mii_txen_0,
@@ -102,19 +103,25 @@ int main(void)
         );
 
     
+    //the actual led driver outputting the data to the led hardware
     on stdcore[0]: leddrive(c_led_data_out, c_led_cmds_out, cWdog[1],
         p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_r1, p_led_out_g1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
+    //the interface to the flash memory for config data
     on stdcore[0]: spiFlash(cSpiFlash, p_flash_miso, p_flash_ss, p_flash_clk, p_flash_mosi, b_flash_clk, b_flash_data);
     
     // Unconstrained threads
+    //a watchdog to reset the hardware if some thread has gone wild
     on stdcore[1]: watchDog(cWdog, 1);
 
+    //the packetbuffer for the internal ethernet server (3rd port of the switch)
     on stdcore[2]: pktbuffer(c_local_rx_in, c_local_rx_out); 
-    
+    //the ethernet server itself
     on stdcore[3]: ethServer(c_local_rx_out, c_local_tx, c_led_data_in, c_led_cmds_in, cSpiFlash, cWdog[2]);
+    // apacket buffer buffering the led commmands
     on stdcore[3]: pktbuffer(c_led_cmds_in, c_led_cmds_out);
+    //the central pixel buffer
     on stdcore[3]: ledbuffer(c_led_data_in, c_led_data_out);
     
   }

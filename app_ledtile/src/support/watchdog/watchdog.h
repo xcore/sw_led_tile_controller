@@ -4,6 +4,11 @@
 // LICENSE.txt and at <http://github.xcore.com/>
 
 /**
+ * WATCHDOG
+ *
+ * Thread watchdog. Queries Processor-Switch and System-Switch control registers
+ * to check for deadlock and attempt local thread resets or system reset.
+ *
  * Module:  LedRefDesign
  * Version: 10.4.1
  * Build:   977cb8e0d3fefc67ac350c5f294ac65919b3ebdc
