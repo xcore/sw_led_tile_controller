@@ -73,7 +73,7 @@ Required Repositories
 Support
 =======
 
-Please post all questions, issues and erros you got here on github on https://github.com/xcore/ap_led_tile_controller/issues
+Please post all questions, issues and erros you got here on github on https://github.com/xcore/sw_led_tile_controller/issues
 
 If you post to the xcore community at https://www.xcore.com/ it is also very likely that you get help and support but laks 
 the tracking of the issue system.
