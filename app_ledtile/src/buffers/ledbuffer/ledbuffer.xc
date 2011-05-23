@@ -198,6 +198,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           // Entire column sent in response
           // Move ptr to required frame
 #ifdef NOROTATE
+          //output the data column wise
           pixelptr *= FRAME_HEIGHT;
           pixelptr += outbufptr;
           for (int i=0; i<FRAME_HEIGHT; i++)
@@ -206,6 +207,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
             pixelptr++;
           }
 #else
+          //output the data row wise
           pixelptr *= 3;
           pixelptr += outbufptr;
           for (int i=0; i<FRAME_HEIGHT; i++)
@@ -214,7 +216,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
             cOut <: (char)buffer[pixelptr+1];
             cOut <: (char)buffer[pixelptr];
             cOut <: (char)0;
-
+            //move to the next pixel in the row
             pixelptr += FRAME_WIDTH * 3;
           }
 #endif
