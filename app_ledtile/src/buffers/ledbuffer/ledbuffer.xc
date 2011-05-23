@@ -45,9 +45,16 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   // Double buffer -- two frames
   // Frame is stored with in columns (original bitmap xy swapped)
   // This allows outputting one column at a time in a simple loop
+  //the size is defined by width * heigt * 3 (rgb) *2 (double buffer)
   unsigned char buffer[BUFFER_SIZE*3];
 
-  unsigned bufswaptriggerN=1, inbufptr=0, outbufptr=FRAME_SIZE*3;
+  //a marker variable if the buffer sink (i.e led driver) allowed to swap the buffers
+  //i.e. are all values rendered from the first buffer to prevent image tearing
+  unsigned bufswaptriggerN=1;
+  //the part of the buffer to write to
+  unsigned inbufptr=0;
+  //the part of the buffer to read from
+  unsigned outbufptr=FRAME_SIZE*3;
   
   
   // Initialise the buffer to the specified test pattern
@@ -165,14 +172,15 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   
   // ---------------------------------------------------
   // Buffer init complete
-    
+
+  //now ew can move ovr to our pixel pushing routine
   while (1)
   {
     unsigned pixelptr;
 #pragma ordered
     select
     {
-      // Sink request
+      // Sink request of pixel data (send data to the led driver)
       case cOut :> pixelptr:
         if (pixelptr == -1)
         {
@@ -230,8 +238,10 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           int len;
           cIn :> len;
           
+          //TODO this should we reworked using defines - hard to understand math
           pixelptr *= 3;
           pixelptr += inbufptr;
+          //write the pixel data to the buffer
           while (len > 0)
           {
             cIn :> buffer[pixelptr+2];
