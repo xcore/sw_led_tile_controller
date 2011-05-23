@@ -10,7 +10,11 @@
  * File:    math.c
  *
  *
- **/                                   
+ **/
+
+/*
+ * A simple method to count the bits set in a unsigned value
+ */
 unsigned countOnes(unsigned input)
 {
   int i;
@@ -24,6 +28,9 @@ unsigned countOnes(unsigned input)
   return retVal;
 }
 
+/*
+ * swaps the value of two memory areas with the given number of bytes
+ */
 void memswap(unsigned char *a, unsigned char *b, unsigned len)
 {
   int i;
