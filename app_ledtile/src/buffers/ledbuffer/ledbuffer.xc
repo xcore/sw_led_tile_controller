@@ -19,7 +19,12 @@
 #define FRAME_SIZE     (FRAME_HEIGHT * FRAME_WIDTH)
 #define BUFFER_SIZE    (2 * FRAME_SIZE)
 #define SWAP(a,b)      {a -= b; b += a; a = b - a;}
+//what data to store in the buffer - TODO does not seem to be used - remove or use
 #define BUFFER_TYPE    unsigned
+//should the buffer be rotate by 90 degrees while outputing data
+//by default no - since the data is fed in and put out by columns
+//TODO shouldn't the driver decide this??
+#define NOROTATE
 
 //----Possible test patterns-----
 #ifndef SIMULATION
@@ -32,6 +37,7 @@
 
 #endif
 
+//the storage of the XMOS logo
 extern unsigned char xmossmall_raw[];
 #define SHIFT 0x01000000
 #define DIV 1
@@ -39,6 +45,7 @@ extern unsigned char xmossmall_raw[];
 #define LOGO_WIDTH  32
 
 // ------------------------------
+//TODO is the unsafe array needed?
 #pragma unsafe arrays
 void ledbuffer(chanend cIn, streaming chanend cOut)
 {
@@ -173,7 +180,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   // ---------------------------------------------------
   // Buffer init complete
 
-  //now ew can move ovr to our pixel pushing routine
+  //now we can move over to our pixel pushing routine
   while (1)
   {
     unsigned pixelptr;
