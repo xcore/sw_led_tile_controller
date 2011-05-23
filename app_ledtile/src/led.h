@@ -175,6 +175,7 @@
 
 #define FRAME_HEIGHT         (MODULE_HEIGHT * NUM_MODULES_Y) // Height of frame in pixels
 #define FRAME_WIDTH          (MODULE_WIDTH * NUM_MODULES_X) // Width of frame in pixels
+//size of the internal fifo buffers in bits (so the real size will be 2^PKTBUFFERBITS
 #define PKTBUFFERBITS                         (9)
 #endif /*LED_H_*/
 

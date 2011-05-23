@@ -16,6 +16,8 @@
 #include <xs1.h>
 #include "led.h"
 
+#define PACKETBUFFER_SIZE (1 << PKTBUFFERBITS)
+
 /*
  * COMMAND BUFFER
  * Buffering FIFO for commands.
@@ -38,15 +40,23 @@
 void pktbuffer(chanend cIn, streaming chanend cOut)
 {
   unsigned int temp;
-  unsigned int buffer[(1 << PKTBUFFERBITS)];
+  //the buffer of the fifo
+  unsigned int buffer[PACKETBUFFER_SIZE];
+  //the read pointer
   unsigned int rptr = 0;
+  //the write pointer
   unsigned int wptr = 0;
-  unsigned int bmask = ((1 << PKTBUFFERBITS) - 1);
+  //the bit mask to wrap read & write pointers acc to the buffer size
+  //TODO this can be a constant
+  unsigned int bmask = (PACKETBUFFER_SIZE - 1);
+
+  //the packet buffer runs in fast mode - to be faster (i.e. react faster on requests)
   set_thread_fast_mode_on();
   
   // Buffer commands for the driver to interpret
   while (1)
   {
+//ensure that the earlier cases get a higher priority while going through the select
 #pragma ordered
     select
     {
@@ -54,18 +64,21 @@ void pktbuffer(chanend cIn, streaming chanend cOut)
       case slave {
         cIn :> temp;
         {
-    	  // Test if FIFO has enough space to include this packet
+          //the new position of the write pointer if we accept this packet
           unsigned int tempwptr = wptr + temp + 2;
-          if (tempwptr > (1 << PKTBUFFERBITS) && tempwptr - (1 << PKTBUFFERBITS) >= rptr)
+    	  // Test if FIFO has enough space to include this packet (is the new write pointer beyond the read pointer)
+          if (tempwptr > PACKETBUFFER_SIZE && tempwptr - PACKETBUFFER_SIZE >= rptr)
           {
         	  // Nack
             cIn <: (int)1;
           }
+          //if the write pointer is below the read pointer and would surpass it - also a no go
           else if (wptr < rptr && tempwptr >= rptr)
           {
             // Nack
             cIn <: (int)1;
           }
+          //seems that we can accept the package
           else
           {
         	  // Ack
