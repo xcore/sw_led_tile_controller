@@ -58,7 +58,7 @@ void leddrive(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWd
   
   while (1)
   {
-	//the driver is selected according to the 'driver' variable to enabl dynamicalyy driver switching
+	//the driver is selected according to the 'driver' variable to enabl dynamically driver switching
 	//the data is sen to tht corresponding driver
     switch (driver)
     {
