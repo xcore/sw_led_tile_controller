@@ -343,6 +343,7 @@ int ledreformat_mbi5030(streaming chanend cLedData, streaming chanend cLedCmd, s
   return 0;
 }
 
+//TODO wouldn't it be better to separate configuration & running - to support drivers with completely different config?
 #pragma unsafe arrays
 int leddrive_mbi5030(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWdog, 
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
