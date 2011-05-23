@@ -17,7 +17,33 @@
 #include <mbi5030.h>
 
 
-
+/*
+ * A generic led driver frontend. It sends the data to the real LED drivers but also allows to dynamically switch the led driver.
+ *
+ * Channels
+ * cLEdData - channel end to receive LED data from the LED Buffer thread.
+ * cLedCmd - channel end to receive LED commands e.g. to receive gamma or color correction commands
+ * cWdog - connection to the watchdog
+ *
+ * Ports
+ * p_led_out_r0,1 - 1bit serial output ports for led data (red)
+ * p_led_out_g0,1 - 1bit serial output ports for led data (green)
+ * p_led_out_b0,1 - 1bit serial output ports for led data (blue)
+ * p_spi_addr 	  - SPI CS port (TODO ???)
+ * p_spi_clk	  - SPI clock port
+ * p_spi_ltch     - latch port to latch the data to the drivers
+ * p_spi_oe 	  - output enable port
+ *
+ * Clocks
+ * b_clk		  - master clock
+ * d_data		  - data clock (TODO??)
+ * b_gsclk		  - clock for the output enable (TODO ????)
+ *
+ * Drivers
+ * - MBI5030 (#1)
+ * - MBI5026 (#2)
+ * the led drivers itself are responsible to switch the driver on request (TODO - isn't that a tad akward?)
+ */
 void leddrive(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWdog,
     buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
     buffered out port:32 p_led_out_r1, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
@@ -27,10 +53,13 @@ void leddrive(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWd
 {
   int driver = -1;
   
+  //initialize the led data processor (which later applies gamm & color correction)
   ledprocess_init();
   
   while (1)
   {
+	//the driver is selected according to the 'driver' variable to enabl dynamicalyy driver switching
+	//the data is sen to tht corresponding driver
     switch (driver)
     {
   #if defined MBI5030
