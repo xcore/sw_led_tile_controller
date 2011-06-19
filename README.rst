@@ -36,8 +36,8 @@ MPlayer supports most MPEG/VOB, AVI and many other media files. MPlayer can be c
 various Linux distributions. Binaries for Windows 32bit and Mac OSX are included in the release.
 The purpose of the plugin is to segment the video stream into tiles, packetise the data, and output it over UDP.
 
-The mplayer plugin is open source and currently not hosted on github. You can download it from the original software 
-from http://www.xmos.com/applications/led-signs-and-displays
+The mplayer plugin is open source and currently is hosted by Interactive Matter on github. 
+You can find it at https://github.com/interactive-matter/ap_led_tile_mplayer
 
 To Do
 =====
