@@ -15,6 +15,7 @@
 #include <ledprocess.h>
 #include <mbi5026.h>
 #include <mbi5030.h>
+#include <mbi5031.h>
 
 
 /*
@@ -88,10 +89,25 @@ void leddrive(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWd
       }
       break;
 #endif
+#if defined MBI5031
+    case (1):
+    {
+      driver = leddrive_mbi5031(cLedData, cLedCmd, cWdog,
+                         p_led_out_r0, p_led_out_g0, p_led_out_b0,
+                         p_led_out_r1, p_led_out_g1, p_led_out_b1,
+                         p_spi_addr, p_spi_clk ,
+                         p_spi_ltch, p_spi_oe ,
+                         b_clk, b_data, b_gsclk, b_ref
+                     );
+    }
+    break;
+#endif
       default:
 #if defined MBI5030
         driver = 1;
 #elif defined MBI5026
+        driver = 2;
+#elif defined MBI5031
         driver = 2;
 #else
         #error "No valid LED driver defined"
