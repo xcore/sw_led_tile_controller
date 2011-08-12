@@ -413,18 +413,14 @@ void writeConfiguration_mbi5031(
                         unsigned value, unsigned cgain, unsigned mask)
 {
   // Create an invalid value (false parity) for the other drivers
-  unsigned dummyvalue = PARITY;
+	//todo this does not exist - so find a way around it
+  unsigned dummyvalue = 0;
   int driver = BUFFER_SIZE/LEDS_PER_DRIVER;
 
 
   // Include current gain
   value = value | (cgain << 2);
 
-#ifndef MBI5030C
-  // Correct parity for real value
-  if (countOnes(value) & 1)
-    value |= PARITY;
-#endif
 
   // Bit reverse if necessary
 #ifdef BITREVERSE
