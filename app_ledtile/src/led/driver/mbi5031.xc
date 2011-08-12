@@ -43,6 +43,14 @@ void mbi5031resetresources(buffered out port:32 p_led_out_r0, buffered out port:
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref);
 int ledreformat_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, streaming chanend cOut,
     unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3], int x);
+//driving the physical pins
+int leddrive_mbi5031_pins(streaming chanend c,
+                   buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
+                   buffered out port:32 p_address_3, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
+                   out port p_spi_addr, buffered out port:32 p_spi_clk ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_gs_clk,
+                   unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3],
+                   int x, int &now, timer t);
 
 
 #ifdef MODE12BIT
@@ -54,6 +62,96 @@ int currentgain = CURRENT_GAIN;
 
 extern unsigned char intensityadjust[3];
 extern unsigned short gammaLUT[3][256];
+
+//TODO wouldn't it be better to separate configuration & running - to support drivers with completely different config?
+#pragma unsafe arrays
+int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWdog,
+                   buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
+                   buffered out port:32 p_address_3, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
+                   out port p_spi_addr, buffered out port:32 p_spi_clk ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_gs_clk ,
+                   clock b_clk, clock b_data, clock b_gsclk, clock b_ref
+               )
+{
+  unsigned short buffers[2][2][NUM_MODULES_X*FRAME_HEIGHT][3];
+  int retval;
+  int x;
+  int lastx;
+  int currentbuf=0;
+  timer t;
+  int now;
+  int starttime,endtime;
+  streaming chan c;
+
+#ifndef SIMULATION
+  for (int i=0; i<2*2*2*NUM_MODULES_X*FRAME_HEIGHT*3; i++)
+    (buffers, unsigned char[])[i] = 0;
+#endif
+
+  leddrive_mbi5031_init(p_led_out_r0, p_led_out_g0, p_led_out_b0,
+      p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk ,
+      b_clk, b_data, b_gsclk, b_ref
+  );
+
+  t :> now;
+
+  while (1)
+  {
+    t :> starttime;
+
+#ifndef SIMULATION
+    cWdog <: 1;
+#endif
+
+    lastx = SCAN_RATE - 1;
+
+    for (int x=0; x<SCAN_RATE; x++)
+    {
+      par
+      {
+        leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
+            p_address_3, p_led_out_g1, p_led_out_b1,
+            p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
+            buffers[0], lastx, now, t);
+        retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[1], x);
+      }
+
+      if (retval)
+        return retval;
+
+      lastx++;
+      if (lastx == SCAN_RATE)
+        lastx = 0;
+
+      x++;
+
+      par
+      {
+        leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
+        		p_address_3q, p_led_out_g1, p_led_out_b1,
+            p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
+            buffers[1], lastx, now, t);
+        retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[0], x);
+      }
+
+      if (retval)
+        return retval;
+
+      lastx++;
+      if (lastx == SCAN_RATE)
+        lastx = 0;
+    }
+
+    cLedData <: -1;
+
+    t :> endtime;
+
+#if 0
+    printintln(endtime - starttime);
+#endif
+  }
+  return 0;
+}
 
 
 /*
@@ -162,97 +260,6 @@ int leddrive_mbi5031_pins(streaming chanend c,
 
   return 0;
 }
-
-//TODO wouldn't it be better to separate configuration & running - to support drivers with completely different config?
-#pragma unsafe arrays
-int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWdog,
-                   buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
-                   buffered out port:32 p_address_3, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
-                   out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_gs_clk ,
-                   clock b_clk, clock b_data, clock b_gsclk, clock b_ref
-               )
-{
-  unsigned short buffers[2][2][NUM_MODULES_X*FRAME_HEIGHT][3];
-  int retval;
-  int x;
-  int lastx;
-  int currentbuf=0;
-  timer t;
-  int now;
-  int starttime,endtime;
-  streaming chan c;
-
-#ifndef SIMULATION
-  for (int i=0; i<2*2*2*NUM_MODULES_X*FRAME_HEIGHT*3; i++)
-    (buffers, unsigned char[])[i] = 0;
-#endif
-
-  leddrive_mbi5031_init(p_led_out_r0, p_led_out_g0, p_led_out_b0,
-      p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk ,
-      b_clk, b_data, b_gsclk, b_ref
-  );
-
-  t :> now;
-
-  while (1)
-  {
-    t :> starttime;
-
-#ifndef SIMULATION
-    cWdog <: 1;
-#endif
-
-    lastx = SCAN_RATE - 1;
-
-    for (int x=0; x<SCAN_RATE; x++)
-    {
-      par
-      {
-        leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
-            p_address_3, p_led_out_g1, p_led_out_b1,
-            p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
-            buffers[0], lastx, now, t);
-        retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[1], x);
-      }
-
-      if (retval)
-        return retval;
-
-      lastx++;
-      if (lastx == SCAN_RATE)
-        lastx = 0;
-
-      x++;
-
-      par
-      {
-        leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
-        		p_address_3, p_led_out_g1, p_led_out_b1,
-            p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
-            buffers[1], lastx, now, t);
-        retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[0], x);
-      }
-
-      if (retval)
-        return retval;
-
-      lastx++;
-      if (lastx == SCAN_RATE)
-        lastx = 0;
-    }
-
-    cLedData <: -1;
-
-    t :> endtime;
-
-#if 0
-    printintln(endtime - starttime);
-#endif
-  }
-  return 0;
-}
-
 
 #pragma unsafe arrays
 void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3],int yptr, int xptr)
