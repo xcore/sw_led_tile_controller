@@ -128,7 +128,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       par
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
-        		p_address_3q, p_led_out_g1, p_led_out_b1,
+        		p_address_3, p_led_out_g1, p_led_out_b1,
             p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
             buffers[1], lastx, now, t);
         retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[0], x);
