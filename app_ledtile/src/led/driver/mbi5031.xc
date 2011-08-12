@@ -81,7 +81,7 @@ extern unsigned short gammaLUT[3][256];
 #pragma unsafe arrays
 int leddrive_mbi5031_pins(streaming chanend c,
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
-                   buffered out port:32 p_led_out_r1, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
+                   buffered out port:32 p_address_3, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
                    buffered out port:32 p_spi_ltch, buffered out port:32 p_gs_clk,
                    unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3],
@@ -135,9 +135,6 @@ int leddrive_mbi5031_pins(streaming chanend c,
       partout(p_led_out_r0, 16, bitrev(buffers[0][yptr][2]) >> 12);
       partout(p_led_out_g0, 16, bitrev(buffers[0][yptr][1]) >> 12);
       partout(p_led_out_b0, 16, bitrev(buffers[0][yptr][0]) >> 12);
-      partout(p_led_out_r1, 16, bitrev(buffers[1][yptr][2]) >> 12);
-      partout(p_led_out_g1, 16, bitrev(buffers[1][yptr][1]) >> 12);
-      partout(p_led_out_b1, 16, bitrev(buffers[1][yptr][0]) >> 12);
 
       if (drivernum == (BUFFER_SIZE/LEDS_PER_DRIVER) - 1)
       {
@@ -170,7 +167,7 @@ int leddrive_mbi5031_pins(streaming chanend c,
 #pragma unsafe arrays
 int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chanend cWdog,
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
-                   buffered out port:32 p_led_out_r1, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
+                   buffered out port:32 p_address_3, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
                    buffered out port:32 p_spi_ltch, buffered out port:32 p_gs_clk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref
@@ -213,7 +210,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       par
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
-            p_led_out_r1, p_led_out_g1, p_led_out_b1,
+            p_address_3, p_led_out_g1, p_led_out_b1,
             p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
             buffers[0], lastx, now, t);
         retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[1], x);
@@ -231,7 +228,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       par
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
-            p_led_out_r1, p_led_out_g1, p_led_out_b1,
+        		p_address_3, p_led_out_g1, p_led_out_b1,
             p_spi_addr, p_spi_clk , p_spi_ltch, p_gs_clk,
             buffers[1], lastx, now, t);
         retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[0], x);
