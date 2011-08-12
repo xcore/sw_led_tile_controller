@@ -256,7 +256,10 @@ int leddrive_mbi5031_pins(streaming chanend c,
   // Bring down the latch
   partout(p_spi_ltch, 1, 0);
   partout(p_spi_clk, 2, 0x55555555);
-  p_spi_addr <: (unsigned)x;
+  //outputting the first 3 bits on the adress
+  p_spi_addr <: (unsigned)(x & 0x7);
+  //outputting the last adress bit on the 4th adress port
+  p_address_3 <: (x & 0x8) >> 4;
 
   return 0;
 }
