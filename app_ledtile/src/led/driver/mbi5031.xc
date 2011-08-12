@@ -36,6 +36,21 @@ extern unsigned char intensityadjust[3];
 extern unsigned short gammaLUT[3][256];
 
 // Write to the LED Drivers' configuration registers
+/*
+ * PORTS
+ * p_led_out_r0 - Port R0 of led output connector
+ * p_led_out_g0 - Port G0 of led output connector
+ * p_led_out_b0 - Port B0 of led output connector
+ * p_led_out_r1 - Port R1 of led output connector
+ * p_led_out_g1 - Port G1 of led output connector
+ * p_led_out_b1 - Port B1 of led output connector
+ * p_spi_ltch - PORT SPI_LTCH of led output connector
+ *
+ * PARAMETERS
+ * value
+ * mask - which RGB ports to use: 0b1 for R0, 0b10 for G0, 0b100 for B0, 0b1000 for R1 and so on
+ * value - the configuration value to write - the current gain setting will be added
+ */
 void writeConfiguration_mbi5031(
     buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
     buffered out port:32 p_led_out_r1, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
@@ -105,6 +120,24 @@ void writeConfiguration_mbi5031(
   partout(p_spi_clk, 2, 0x01);
 }
 
+/*
+ * PORTS
+ * p_led_out_r0 - Port R0 of led output connector
+ * p_led_out_g0 - Port G0 of led output connector
+ * p_led_out_b0 - Port B0 of led output connector
+ * p_led_out_r1 - Port R1 of led output connector
+ * p_led_out_g1 - Port G1 of led output connector
+ * p_led_out_b1 - Port B1 of led output connector
+ * p_spi_addr the 4 bit port for the address (only 3 are brought out to the LED OUT connector)
+ * p_spi_clck - the SPI serial data clock port
+ * p_spi_ltch - PORT SPI_LTCH of led output connector
+ * p_spi_oe The SPI Output Enable port (in reality it is the grayscale clock)
+ *
+ * PARAMETERS
+ * value
+ * mask - which RGB ports to use: 0b1 for R0, 0b10 for G0, 0b100 for B0, 0b1000 for R1 and so on
+ * value - the configuration value to write - the current gain setting will be added
+ */
 void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    buffered out port:32 p_led_out_r1, buffered out port:32 p_led_out_g1, buffered out port:32 p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
