@@ -48,7 +48,6 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 #define GLOBL_LATCH             (bitrev((1 <<  3) - 1) >> 16)
 #define REGISTER_WRITE_LATCH    (bitrev((1 << 11) - 1) >> 16)
 
-
 #define SELF_SYNC      (1 << 0xA)
 #define GCLK_TIMEOUT   (1 << 0x0)
 #define PWM_GS_12BIT   ((1 << 0xC) | (1 << 0xB))
