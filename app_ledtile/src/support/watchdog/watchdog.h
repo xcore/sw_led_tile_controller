@@ -38,6 +38,6 @@
  * cWdogServer - Unidirectional input
  * cWdogLed - Unidirectional input
  */
-void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slowdown);
+void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slow, int enabled);
 
 #endif /*WATCHDOG_H_*/

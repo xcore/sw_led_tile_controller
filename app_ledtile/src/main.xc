@@ -80,6 +80,9 @@ out port p_flash_ss                             = PORT_SPI_SS;
 buffered out port:32 p_flash_clk                = PORT_SPI_CLK;
 buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 
+//enable or disable the watchdog
+#define WATCHDOG_ENABLED 1
+
 // Top level main
 int main(void)
 {
@@ -90,6 +93,7 @@ int main(void)
   streaming chan c_led_cmds_out, c_local_rx_out;
   chan cSpiFlash;
   chan cWdog[NUM_WATCHDOG_CHANS];
+
   par
   {
     // Threads constrained by I/O or latency requirements
@@ -115,7 +119,7 @@ int main(void)
     
     // Unconstrained threads
     //a watchdog to reset the hardware if some thread has gone wild
-    on stdcore[1]: watchDog(cWdog, 1);
+    on stdcore[1]: watchDog(cWdog, 1, WATCHDOG_ENABLED);
 
     //the packetbuffer for the internal ethernet server (3rd port of the switch)
     on stdcore[2]: pktbuffer(c_local_rx_in, c_local_rx_out); 
