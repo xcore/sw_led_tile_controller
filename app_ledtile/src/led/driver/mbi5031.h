@@ -41,8 +41,9 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 
 #define GET_DATA(a) a
 #define BITREVERSE
-#define MODE12BIT
+#define MODE12BIT //there are some 6 bit modes - but we do not use them (or do not really know how to use them)
 
+//clock lenght for different actions of the MBI chip
 #define LOCAL_LATCH             (bitrev((1 <<  1) - 1) >> 16)
 #define GLOBL_LATCH             (bitrev((1 <<  3) - 1) >> 16)
 #define REGISTER_WRITE_LATCH    (bitrev((1 << 11) - 1) >> 16)
@@ -51,7 +52,6 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 #define SELF_SYNC      (1 << 0xA)
 #define GCLK_TIMEOUT   (1 << 0x0)
 #define PWM_GS_12BIT   ((1 << 0xC) | (1 << 0xB))
-#define PARITY         (1 << 0xF)
 #define CURRENT_GAIN   (0b1111111100)
 
 

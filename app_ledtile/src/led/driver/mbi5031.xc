@@ -45,44 +45,27 @@ extern unsigned short gammaLUT[3][256];
 void writeConfiguration_mbi5031(
     buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
     buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_clk,  
-                        unsigned value, unsigned cgain, unsigned mask)
+                        unsigned value, unsigned cgain)
 {
   // Create an invalid value (false parity) for the other drivers
-  unsigned dummyvalue = PARITY;
   int driver = BUFFER_SIZE/LEDS_PER_DRIVER;
 
   
   // Include current gain
   value = value | (cgain << 2);
   
-#ifndef MBI5030C
-  // Correct parity for real value
-  if (countOnes(value) & 1)
-    value |= PARITY;
-#endif
 
   // Bit reverse if necessary
 #ifdef BITREVERSE
-  dummyvalue = bitrev(dummyvalue) >> 16;
   value = bitrev(value) >> 16;
 #endif
   
   while (driver)
   {
     driver--;
-    // First 3 channels
-    if (mask & 0b000001)
-      partout(p_led_out_r0, 16, value);
-    else
-      partout(p_led_out_r0, 16, dummyvalue);
-    if (mask & 0b000010)
-      partout(p_led_out_g0, 16, value);
-    else
-      partout(p_led_out_g0, 16, dummyvalue);
-    if (mask & 0b000100)
-      partout(p_led_out_b0, 16, value);
-    else
-      partout(p_led_out_b0, 16, dummyvalue);
+    partout(p_led_out_r0, 16, value);
+    partout(p_led_out_g0, 16, value);
+    partout(p_led_out_b0, 16, value);
     
     if (driver == 0)
       partout(p_spi_ltch, 16, REGISTER_WRITE_LATCH);
@@ -145,7 +128,7 @@ void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:
 
   // Setup the default configuration register
   writeConfiguration_mbi5031(p_led_out_r0, p_led_out_g0, p_led_out_b0,
-  p_spi_ltch, p_spi_clk, options, currentgain, 0xFFFFFFFF);
+  p_spi_ltch, p_spi_clk, options, currentgain);
 }
 
 
@@ -202,8 +185,9 @@ int leddrive_mbi5031_pins(streaming chanend c,
         c :> mask;
         c :> currentgain;
 
+        //TODO there is no mask on MBI5031 - perhaps we have to introduce it manually later
         writeConfiguration_mbi5031(p_led_out_r0, p_led_out_g0, p_led_out_b0,
-            p_spi_ltch, p_spi_clk, options, currentgain, mask);
+            p_spi_ltch, p_spi_clk, options, currentgain);
         break;
       }
       case (XMOS_CHANGEDRIVER):
