@@ -237,7 +237,7 @@ int leddrive_mbi5031_pins(streaming chanend c,
 
   {
 	  //TODO the soldering of the adress is a tad funny, let's improve in the 2nd version
-	  unsigned char address = (bitrev(x)>>4) & 0x7;
+	  unsigned int address = (bitrev(x)>>28) & 0x7;
 	  unsigned char a_address = x & 0x1;
 
 	  p_spi_addr <: (unsigned)address;
