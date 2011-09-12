@@ -193,7 +193,7 @@ int leddrive_mbi5031_pins(streaming chanend c,
                    out port p_led_out_r1, out port p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
                    buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk,
-                   unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3],
+                   unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3],
                    int x, int &now, timer t
                )
 {
@@ -242,9 +242,9 @@ int leddrive_mbi5031_pins(streaming chanend c,
     {
       unsigned yptr = channel + LEDS_PER_DRIVER * drivernum;
       // Pass new data to the output ports
-      partout(p_led_out_r0, 16, bitrev(buffers[0][yptr][2]) >> 12);
-      partout(p_led_out_g0, 16, bitrev(buffers[0][yptr][1]) >> 12);
-      partout(p_led_out_b0, 16, bitrev(buffers[0][yptr][0]) >> 12);
+      partout(p_led_out_r0, 16, bitrev(buffers[yptr][2]) >> 12);
+      partout(p_led_out_g0, 16, bitrev(buffers[yptr][1]) >> 12);
+      partout(p_led_out_b0, 16, bitrev(buffers[yptr][0]) >> 12);
       
       if (drivernum == (BUFFER_SIZE/LEDS_PER_DRIVER) - 1)
       {
@@ -316,7 +316,7 @@ void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*
 
 #pragma unsafe arrays
 int ledreformat_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, streaming chanend cOut,
-    unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3], int x)
+    unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3], int x)
 {
   int cmdresponse;
   unsigned xptr = FRAME_WIDTH + x - (SCAN_RATE * 2);
@@ -335,8 +335,7 @@ int ledreformat_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, s
   
   for (int i=0; i < FRAME_WIDTH/MODULE_WIDTH; i++)
   {
-    getColumn(cLedData, buffers[0], i * FRAME_HEIGHT, (xptr - (i*MODULE_WIDTH)));
-    getColumn(cLedData, buffers[1], i * FRAME_HEIGHT, (xptr - (i*MODULE_WIDTH) + SCAN_RATE));
+    getColumn(cLedData, buffers, i * FRAME_HEIGHT, (xptr - (i*MODULE_WIDTH)));
   }
 
   return 0;
@@ -351,7 +350,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref
                )
 {
-  unsigned short buffers[2][2][NUM_MODULES_X*FRAME_HEIGHT][3];
+  unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3];
   int retval;
   int lastx;
   timer t;
@@ -360,7 +359,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
   streaming chan c;
 
 #ifndef SIMULATION
-  for (int i=0; i<2*2*2*NUM_MODULES_X*FRAME_HEIGHT*3; i++)
+  for (int i=0; i<2*2*NUM_MODULES_X*FRAME_HEIGHT*3; i++)
     (buffers, unsigned char[])[i] = 0;
 #endif
   
