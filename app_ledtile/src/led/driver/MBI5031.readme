@@ -31,4 +31,12 @@ B_IN - B
 C_IN - C
 D_IN - G1
 CS_IN - !G2B
-VCC - !G2A
+GND - !G2A
+
+Keep in mind that for each pin the following conditions must be met to write a value
+!G1A 0
+!g2A 0
+G 1
+
+to write adress 1-8 D, CS must be low
+to write address 9-16 CS must be low, D must be 1 
