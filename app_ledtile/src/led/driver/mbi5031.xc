@@ -380,8 +380,18 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
     
     lastx = SCAN_RATE - 1;
     
+    /*
+     * The buffering scheme looks quite complicated here - but it is not:
+     * in each run two columns are read:
+     * first read into buffer 1, outputted from buffer 0
+     * next read into buffer 0, outputted from buffer 1 (which is the column read in the first round)
+     *
+     * TODO the principle is simple - why isn't the code simple?
+     */
     for (int x=0; x<SCAN_RATE; x++)
     {
+    	//read new data in buffers[1]
+    	//and send the data from buffer[0] to the rgb matrix
       par
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
@@ -400,6 +410,8 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       
       x++;
       
+  	//read new data in buffers[0]
+  	//and send the data from buffer[1] to the rgb matrix
       par
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
