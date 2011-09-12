@@ -210,8 +210,12 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           pixelptr += outbufptr;
           for (int i=0; i<FRAME_HEIGHT; i++)
           {
-            cOut <: buffer[pixelptr];
-            pixelptr++;
+              cOut <: (char)buffer[pixelptr+2];
+              cOut <: (char)buffer[pixelptr+1];
+              cOut <: (char)buffer[pixelptr];
+              cOut <: (char)0;
+              //move to the next pixel in the row
+              pixelptr += 3;
           }
 #else
           //output the data row wise
