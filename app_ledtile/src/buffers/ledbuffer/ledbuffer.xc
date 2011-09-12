@@ -189,7 +189,9 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
 #pragma ordered
     select
     {
-      // Sink request of pixel data (send data to the led driver)
+        // Sink request of pixel data (send data to the led driver)
+    	//the pixelpointer contains -1 for a new image
+    	//or the column/row number
       case cOut :> pixelptr:
         if (pixelptr == -1)
         {
@@ -208,7 +210,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           // Move ptr to required frame
 #ifdef NOROTATE
           //output the data column wise
-          pixelptr *= FRAME_HEIGHT;
+          pixelptr *= FRAME_HEIGHT*3;
           pixelptr += outbufptr;
           for (int i=0; i<FRAME_HEIGHT; i++)
           {
