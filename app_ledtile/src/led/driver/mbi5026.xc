@@ -18,9 +18,7 @@
 #include "resetres.h"
 #include "led.h"
 #include "ledprocess.h"
-#include "leddriver.h"
 #include "print.h"
-#include "leddriver.h"
 #include "mbi5026.h"
 
 #if defined MBI5026

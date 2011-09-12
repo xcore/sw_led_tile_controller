@@ -15,7 +15,7 @@
 #include <platform.h>
 
 #include "ledbuffer.h"
-#include "leddriver.h"
+#include "mbi5031.h"
 #include "led.h"
 #include "miimain.h"
 #include "ethSwitch.h"
@@ -25,6 +25,7 @@
 #include "flashmanager.h"
 #include "ledprocess.h"
 #include "misc.h"
+#include "mbi5031.h"
 
 
 // Ethernet Ports and Clock Blocks
@@ -103,8 +104,9 @@ int main(void)
         );
 
     
-    //the actual led driver outputting the data to the led hardware
-    on stdcore[0]: leddrive(c_led_data_out, c_led_cmds_out, cWdog[1],
+    //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
+    //this needs to be done so taht each led driver can define & use the pins it wants to use
+    on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[1],
         p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_r1, p_led_out_g1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
