@@ -353,9 +353,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 {
   unsigned short buffers[2][2][NUM_MODULES_X*FRAME_HEIGHT][3];
   int retval;
-  int x;
   int lastx;
-  int currentbuf=0;
   timer t;
   int now;
   int starttime,endtime;
