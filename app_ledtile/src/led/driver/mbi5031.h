@@ -23,7 +23,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_led_out_r1, out port p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref
                );
 

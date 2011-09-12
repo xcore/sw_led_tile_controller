@@ -27,7 +27,7 @@
 //initialize SPi# ports
 void mbi5031_resetresources(buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref);
 
 
@@ -41,7 +41,23 @@ int currentgain = CURRENT_GAIN;
 extern unsigned char intensityadjust[3];
 extern unsigned short gammaLUT[3][256];
 
-// Write to the LED Drivers' configuration registers
+/*
+ * Write to the LED Drivers' configuration registers
+ *
+ * PORTS
+ * p_led_out_r0 - Port R0 of led output connector
+ * p_led_out_g0 - Port G0 of led output connector
+ * p_led_out_b0 - Port B0 of led output connector
+ * p_led_out_r1 - Port R1 of led output connector
+ * p_led_out_g1 - Port G1 of led output connector
+ * p_led_out_b1 - Port B1 of led output connector
+ * p_spi_ltch - PORT SPI_LTCH of led output connector
+ *
+ * PARAMETERS
+ * value
+ * mask - which RGB ports to use: 0b1 for R0, 0b10 for G0, 0b100 for B0, 0b1000 for R1 and so on
+ * value - the configuration value to write - the current gain setting will be added
+ */
 void writeConfiguration_mbi5031(
     buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
     buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_clk,  
@@ -80,9 +96,27 @@ void writeConfiguration_mbi5031(
   partout(p_spi_clk, 2, 0x01);
 }
 
+/*
+ * PORTS
+ * p_led_out_r0 - Port R0 of led output connector
+ * p_led_out_g0 - Port G0 of led output connector
+ * p_led_out_b0 - Port B0 of led output connector
+ * p_led_out_r1 - Port R1 of led output connector
+ * p_led_out_g1 - Port G1 of led output connector
+ * p_led_out_b1 - Port B1 of led output connector
+ * p_spi_addr the 4 bit port for the address (only 3 are brought out to the LED OUT connector)
+ * p_spi_clck - the SPI serial data clock port
+ * p_spi_ltch - PORT SPI_LTCH of led output connector
+ * p_spi_gclk The SPI Output Enable port (in reality it is the grayscale clock)
+ *
+ * PARAMETERS
+ * value
+ * mask - which RGB ports to use: 0b1 for R0, 0b10 for G0, 0b100 for B0, 0b1000 for R1 and so on
+ * value - the configuration value to write - the current gain setting will be added
+ */
 void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref
                )
 {
@@ -90,7 +124,7 @@ void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:
   partout(p_spi_clk, 1, 0);
   
   mbi5031_resetresources(p_led_out_r0, p_led_out_g0, p_led_out_b0,
-      p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_oe ,
+      p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_gclk ,
       b_clk, b_data, b_gsclk, b_ref);
   
   // Initialise ports
@@ -106,7 +140,7 @@ void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:
   set_clock_div(b_clk, SPI_CLKDIV);
   
   set_port_clock(p_spi_clk, b_clk);
-  configure_port_clock_output(p_spi_oe, b_gsclk);
+  configure_port_clock_output(p_spi_gclk, b_gsclk);
 
   set_clock_src(b_data, p_spi_clk);
   // Clock ports
@@ -151,14 +185,14 @@ void leddrive_mbi5031_init(buffered out port:32 p_led_out_r0, buffered out port:
  * p_spi_addr - Output port, 4bit Port Width bit 1-3 used
  * p_spi_clk - Buffered output port, 32bit Transfer Width, 1bit Port Width
  * p_spi_ltch - Buffered output port, 32bit Transfer Width, 1bit Port Width
- * p_spi_oe - 1bit Port Width
+ * p_spi_gclk - 1bit Port Width
  */
 #pragma unsafe arrays
 int leddrive_mbi5031_pins(streaming chanend c,
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_led_out_r1, out port p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe, 
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk,
                    unsigned short buffers[2][NUM_MODULES_X*FRAME_HEIGHT][3],
                    int x, int &now, timer t
                )
@@ -237,11 +271,7 @@ int leddrive_mbi5031_pins(streaming chanend c,
 
   {
 	  //TODO the soldering of the adress is a tad funny, let's improve in the 2nd version
-<<<<<<< HEAD
 	  unsigned int address = (bitrev(x)>>28) & 0x7;
-=======
-	  unsigned char address = (bitrev(x)>>4) & 0x7;
->>>>>>> getting the addressing right?
 	  unsigned char a_address = x & 0x1;
 
 	  p_spi_addr <: (unsigned)address;
@@ -317,7 +347,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
                    buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_led_out_r1, out port p_led_out_b1,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref
                )
 {
@@ -337,7 +367,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 #endif
   
   leddrive_mbi5031_init(p_led_out_r0, p_led_out_g0, p_led_out_b0,
-      p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_oe ,
+      p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_gclk ,
       b_clk, b_data, b_gsclk, b_ref
   );
   
@@ -359,7 +389,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
             p_led_out_r1,p_led_out_b1,
-            p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_oe,
+            p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_gclk,
             buffers[0], lastx, now, t);
         retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[1], x);
       }
@@ -377,7 +407,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       {
         leddrive_mbi5031_pins(c, p_led_out_r0, p_led_out_g0, p_led_out_b0,
             p_led_out_r1, p_led_out_b1,
-            p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_oe,
+            p_spi_addr, p_spi_clk , p_spi_ltch, p_spi_gclk,
             buffers[1], lastx, now, t);
         retval = ledreformat_mbi5031(cLedData, cLedCmd, c, buffers[0], x);
       }
@@ -404,7 +434,7 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
 
 void mbi5031_resetresources(buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
                    out port p_spi_addr, buffered out port:32 p_spi_clk ,
-                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_oe ,
+                   buffered out port:32 p_spi_ltch, buffered out port:32 p_spi_gclk ,
                    clock b_clk, clock b_data, clock b_gsclk, clock b_ref)
 {
   configure_out_port_no_ready(p_led_out_r0, b_ref, 0);
@@ -413,7 +443,7 @@ void mbi5031_resetresources(buffered out port:32 p_led_out_r0, buffered out port
   configure_out_port_no_ready(p_spi_addr, b_ref, 0);
   configure_out_port_no_ready(p_spi_clk, b_ref, 0);
   configure_out_port_no_ready(p_spi_ltch, b_ref, 0);
-  configure_out_port_no_ready(p_spi_oe, b_ref, 0);
+  configure_out_port_no_ready(p_spi_gclk, b_ref, 0);
 
   set_clock_off(b_clk);
   set_clock_off(b_data);
