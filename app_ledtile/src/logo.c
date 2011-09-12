@@ -5,6 +5,7 @@
 
 /**
  * XMOS Logo Bitmap for inital display
+ * 64x32 pixels
  *
  * Module:  LedRefDesign
  * Version: 10.4.1
