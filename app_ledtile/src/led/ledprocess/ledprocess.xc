@@ -59,8 +59,9 @@ int ledprocess_commands(streaming chanend cLedCmd, streaming chanend cOut, int o
         cLedCmd :> colchan;
 
         cmdlen -= 2;
-        if (cmdlen >= 256)
+        if (cmdlen > 256) {
           cmdlen = 256;
+        }
         for (int i=0; i < cmdlen; i++)
         {
           int data;
