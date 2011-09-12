@@ -45,11 +45,17 @@ void read_spi_gamma(int offset, char val, chanend cLedCmd, chanend cFlash)
   // If read all FFs from flash, use some sensible default
   for (i=0; i<256; i++)
   {
-    if (gbuf[i] != 0xFF)
+    if (gbuf[i] != 0xFFFF)
       break;
   }
   allFF = (i == 256);
   
+  if (allFF) {
+	  for (int i=0; i<256; i++) {
+		  gbuf[i]=i<<8;
+	  }
+  }
+
   do
   {
     // Store in command buffer
