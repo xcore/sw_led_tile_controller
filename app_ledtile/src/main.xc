@@ -81,7 +81,7 @@ buffered out port:32 p_flash_clk                = PORT_SPI_CLK;
 buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 
 //enable or disable the watchdog
-#define WATCHDOG_ENABLED 1
+#define WATCHDOG_ENABLED 0
 
 // Top level main
 int main(void)
