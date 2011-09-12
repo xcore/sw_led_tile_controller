@@ -142,7 +142,7 @@
 #endif
 
 #ifdef INDOOR_16x16
-#define SCAN_RATE                             (8)
+#define SCAN_RATE                             (16)
 #define MODULE_WIDTH                         (16)
 #define MODULE_HEIGHT                        (16)
 #define CHAIN_LENGTH                          (16)
