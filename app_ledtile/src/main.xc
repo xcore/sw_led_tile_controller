@@ -62,9 +62,9 @@ out port p_smi_mdc_1                            = PORT_ETH_MDC_1;
 buffered out port:32 p_led_out_r0               = PORT_LED_OUT_R0;
 buffered out port:32 p_led_out_g0               = PORT_LED_OUT_G0;
 buffered out port:32 p_led_out_b0               = PORT_LED_OUT_B0;
-buffered out port:32 p_led_out_r1               = PORT_LED_OUT_R1;
-buffered out port:32 p_led_out_g1               = PORT_LED_OUT_G1;
-buffered out port:32 p_led_out_b1               = PORT_LED_OUT_B1;
+out port p_led_out_r1               			= PORT_LED_OUT_R1;
+out port p_led_out_g1               			= PORT_LED_OUT_G1;
+out port p_led_out_b1               			= PORT_LED_OUT_B1;
 out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
 buffered out port:32 p_led_out_ltch             = PORT_LED_OUT_LATCH;
@@ -107,7 +107,7 @@ int main(void)
     //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
     //this needs to be done so taht each led driver can define & use the pins it wants to use
     on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[1],
-        p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_r1, p_led_out_g1, p_led_out_b1,
+        p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_r1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
     //the interface to the flash memory for config data
