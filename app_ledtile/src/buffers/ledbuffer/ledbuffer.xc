@@ -167,7 +167,9 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
 #else
             ptr2 = (ptrx + ((FRAME_HEIGHT - 1 - y)%LOGO_HEIGHT)) * 3 + c;
 #endif                        
+            //copy over the logo
             buffer[ptr] = xmossmall_raw[ptr2];
+            //and put it in the 2nd buffer too
             buffer[FRAME_SIZE*3 + ptr] = buffer[ptr];
             ptr++;
           }
