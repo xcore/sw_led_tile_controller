@@ -233,7 +233,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
         }
         break;
       
-      // Source dump
+      // Sourc§e dump
       // Guard exists to prevent more data pushed in after frame switch
       case (bufswaptriggerN) => slave
       {

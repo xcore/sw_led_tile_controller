@@ -27,7 +27,7 @@
 #include "flashclient.h"
 #include "chanabs.h"
 #include "math.h"
-#include "ledbufferclient.h"
+#include "ledbufferwriter.h"
 #include "pktbufferclient.h"
 
 
