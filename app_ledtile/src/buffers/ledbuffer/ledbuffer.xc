@@ -29,7 +29,7 @@
 //#define SINGLELINETEST
 //#define SHADETESTX
 //#define SHADETESTY
-//#define GAMMATEST
+//#define GAMMATEST 100
 #define LOGO
 
 #endif

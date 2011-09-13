@@ -242,9 +242,9 @@ int leddrive_mbi5031_pins(streaming chanend c,
     {
       unsigned yptr = channel + LEDS_PER_DRIVER * drivernum;
       // Pass new data to the output ports
-      partout(p_led_out_r0, 16, bitrev(buffers[yptr][0]) >> 12);
-      partout(p_led_out_g0, 16, bitrev(buffers[yptr][1]) >> 12);
-      partout(p_led_out_b0, 16, bitrev(buffers[yptr][2]) >> 12);
+      partout(p_led_out_r0, 16, bitrev(buffers[yptr][0])>>16);
+      partout(p_led_out_g0, 16, bitrev(buffers[yptr][1])>>16);
+      partout(p_led_out_b0, 16, bitrev(buffers[yptr][2])>>16);
       
       if (drivernum == (BUFFER_SIZE/LEDS_PER_DRIVER) - 1)
       {
@@ -303,9 +303,9 @@ void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*
 #pragma loop unroll(3)
     for (int c=0; c<3; c++)
     {
-      int val = (tbuf, char[])[(y << 2) + (2-c) + 1];
+      unsigned int val = (tbuf, char[])[(y << 2) + (2-c) + 1];
       
-      val = bitrev(gammaLUT[c][val]) >> 16;
+      val = gammaLUT[c][val];
       val = (val * intensityadjust[c]) >> 8;
       
       buffers[yptr + y][c] = val;
