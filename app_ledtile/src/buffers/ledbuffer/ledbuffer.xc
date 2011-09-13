@@ -21,7 +21,7 @@
 //should the buffer be rotate by 90 degrees while outputing data
 //by default no - since the data is fed in and put out by columns
 //TODO shouldn't the driver decide this??
-#define NOROTATE
+//#define NOROTATE
 
 //----Possible test patterns-----
 #ifndef SIMULATION

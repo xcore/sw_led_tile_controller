@@ -283,14 +283,14 @@ int leddrive_mbi5031_pins(streaming chanend c,
 }
 
 #pragma unsafe arrays
-void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3],int yptr, int xptr)
+void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3],int yptr, int column)
 {
   unsigned tbuf[FRAME_HEIGHT];
 
   // Retrieve column's led data from frame buffer
   {
     unsigned ptr = FRAME_HEIGHT;
-    cLedData <: FRAME_WIDTH - 1 - xptr;
+    cLedData <: column;
     while (ptr)
     {
       ptr--;
@@ -319,7 +319,6 @@ int ledreformat_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, s
     unsigned short buffers[NUM_MODULES_X*FRAME_HEIGHT][3], int x)
 {
   int cmdresponse;
-  unsigned xptr = FRAME_WIDTH + x - (SCAN_RATE * 2);
 
   // Process any commands coming down the pipeline
   if (x==0)
@@ -335,7 +334,7 @@ int ledreformat_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, s
   
   for (int i=0; i < FRAME_WIDTH/MODULE_WIDTH; i++)
   {
-    getColumn(cLedData, buffers, i * FRAME_HEIGHT, (xptr - (i*MODULE_WIDTH)));
+    getColumn(cLedData, buffers, i * FRAME_HEIGHT, x);
   }
 
   return 0;
