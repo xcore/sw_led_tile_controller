@@ -23,6 +23,9 @@
 
 #if defined MBI5031
 
+//how to convert the 16 bit data value to an output value for the MBI chip
+#define MBI5031_REFORMAT(c) (bitrev(c)>>10)
+
 //some prototpyes for our private functions
 //initialize SPi# ports
 void mbi5031_resetresources(buffered out port:32 p_led_out_r0, buffered out port:32 p_led_out_g0, buffered out port:32 p_led_out_b0,
@@ -242,9 +245,9 @@ int leddrive_mbi5031_pins(streaming chanend c,
     {
       unsigned yptr = channel + LEDS_PER_DRIVER * drivernum;
       // Pass new data to the output ports
-      partout(p_led_out_r0, 16, bitrev(buffers[yptr][0])>>16);
-      partout(p_led_out_g0, 16, bitrev(buffers[yptr][1])>>16);
-      partout(p_led_out_b0, 16, bitrev(buffers[yptr][2])>>16);
+      partout(p_led_out_r0, 16, MBI5031_REFORMAT(buffers[yptr][0]));
+      partout(p_led_out_g0, 16, MBI5031_REFORMAT(buffers[yptr][1]));
+      partout(p_led_out_b0, 16, MBI5031_REFORMAT(buffers[yptr][2]));
       
       if (drivernum == (BUFFER_SIZE/LEDS_PER_DRIVER) - 1)
       {

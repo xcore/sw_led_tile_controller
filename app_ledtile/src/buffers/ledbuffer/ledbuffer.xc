@@ -27,10 +27,10 @@
 #ifndef SIMULATION
 
 //#define SINGLELINETEST
-//#define SHADETESTX
-#define SHADETESTY
+#define SHADETESTX
+//#define SHADETESTY
 //#define GAMMATEST 100
-#define LOGO
+//#define LOGO
 
 #endif
 
