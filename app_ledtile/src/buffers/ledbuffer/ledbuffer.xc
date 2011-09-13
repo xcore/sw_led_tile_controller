@@ -201,6 +201,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           // Request for data received by display driver
           // Entire column sent in response
           // Move ptr to required frame
+        	//TODO why is it outputed as 32 bit with 0GBR??
 #ifdef NOROTATE
           //output the data row wise
           pixelptr = LED_BUFFER_ROW(pixelptr);
