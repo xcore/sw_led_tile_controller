@@ -28,7 +28,7 @@
 
 //#define SINGLELINETEST
 //#define SHADETESTX
-//#define SHADETESTY
+#define SHADETESTY
 //#define GAMMATEST 100
 #define LOGO
 

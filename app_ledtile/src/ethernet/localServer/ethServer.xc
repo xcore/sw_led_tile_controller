@@ -19,6 +19,7 @@
 #include "flashmanager.h"
 #include "ledprocess.h"
 #include "watchdog.h"
+#include "gamma_lut_builder.h"
 
 #define TIMEOUT 100000000
 
@@ -51,9 +52,7 @@ void read_spi_gamma(int offset, char val, chanend cLedCmd, chanend cFlash)
   allFF = (i == 256);
   
   if (allFF) {
-	  for (int i=0; i<256; i++) {
-		  gbuf[i]=i<<8;
-	  }
+	  buildGammaLUT(gbuf);
   }
 
   do
