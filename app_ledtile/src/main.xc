@@ -14,10 +14,16 @@
 #include <xs1.h>
 #include <platform.h>
 
+//ethernet stuff
+#include "ethernet_server.h"
+#include "ethernet_tx_client.h"
+#include "ethernet_rx_client.h"
+#include "getmac.h"
+
+
 #include "ledbuffer.h"
 #include "mbi5031.h"
 #include "led.h"
-#include "miimain.h"
 #include "ethSwitch.h"
 #include "ethServer.h"
 #include "pktbuffer.h"
@@ -31,31 +37,42 @@
 // Ethernet Ports and Clock Blocks
 // -----------------------
 on stdcore[2]: clock clk_mii_ref                = XS1_CLKBLK_REF;
-on stdcore[2]: clock clk_mii_rx_0               = XS1_CLKBLK_1;
-on stdcore[2]: clock clk_mii_tx_0                              = XS1_CLKBLK_2;
-in port p_mii_rxclk_0                           = PORT_ETH_RXCLK_0;
-buffered in port:32 p_mii_rxd_0                 = PORT_ETH_RXD_0;
-in port p_mii_rxdv_0                            = PORT_ETH_RXDV_0;
-in port p_mii_rxer_0                            = PORT_ETH_RXER_0;
-in port p_mii_txclk_0                           = PORT_ETH_TXCLK_0;
-buffered out port:32 p_mii_txd_0                = PORT_ETH_TXD_0;
-out port p_mii_txen_0                           = PORT_ETH_TXEN_0;
 on stdcore[2]: clock clk_smi                    = XS1_CLKBLK_3;
-port p_smi_mdio_0                               = PORT_ETH_MDIO_0;
-out port p_smi_mdc_0                            = PORT_ETH_MDC_0;
-out port p_mii_resetn                           = PORT_ETH_RST_N;
 
-on stdcore[2]: clock clk_mii_rx_1               = XS1_CLKBLK_4;
-on stdcore[2]: clock clk_mii_tx_1               = XS1_CLKBLK_5;
-in port p_mii_rxclk_1                           = PORT_ETH_RXCLK_1;
-buffered in port:32 p_mii_rxd_1                 = PORT_ETH_RXD_1;
-in port p_mii_rxdv_1                            = PORT_ETH_RXDV_1;
-in port p_mii_rxer_1                            = PORT_ETH_RXER_1;
-in port p_mii_txclk_1                           = PORT_ETH_TXCLK_1;
-buffered out port:32 p_mii_txd_1                = PORT_ETH_TXD_1;
-out port p_mii_txen_1                           = PORT_ETH_TXEN_1;
-port p_smi_mdio_1                               = PORT_ETH_MDIO_1;
-out port p_smi_mdc_1                            = PORT_ETH_MDC_1;
+on stdcore[2]: mii_interface_t mii_0 =
+  {
+    XS1_CLKBLK_1,
+    XS1_CLKBLK_2,
+
+    PORT_ETH_RXCLK_0,
+    PORT_ETH_RXER_0,
+    PORT_ETH_RXD_0,
+    PORT_ETH_RXDV_0,
+
+    PORT_ETH_TXCLK_0,
+    PORT_ETH_TXEN_0,
+    PORT_ETH_TXD_0,
+  };
+
+on stdcore[2]: mii_interface_t mii_1 =
+  {
+    XS1_CLKBLK_4,
+    XS1_CLKBLK_5,
+
+    PORT_ETH_RXCLK_1,
+    PORT_ETH_RXER_1,
+    PORT_ETH_RXD_1,
+    PORT_ETH_RXDV_1,
+
+    PORT_ETH_TXCLK_1,
+    PORT_ETH_TXEN_1,
+    PORT_ETH_TXD_1,
+  };
+
+
+on stdcore[2]: out port p_mii_resetn = PORT_ETH_RST_N;
+on stdcore[2]: smi_interface_t smi_0 = { PORT_ETH_MDIO_0, PORT_ETH_MDC_0, 0 };
+on stdcore[2]: smi_interface_t smi_1 = { PORT_ETH_MDIO_1, PORT_ETH_MDC_1, 0 };
 
 // LED Tile Ports
 // -----------------------
@@ -98,14 +115,13 @@ int main(void)
   {
     // Threads constrained by I/O or latency requirements
 	//the internal 3 port ethernet switch
-    on stdcore[2]: ethernetSwitch3Port(
-        clk_mii_rx_0, p_mii_rxclk_0, p_mii_rxd_0, p_mii_rxdv_0, p_mii_rxer_0,
-        clk_mii_tx_0, p_mii_txclk_0, p_mii_txd_0, p_mii_txen_0,
-        clk_mii_rx_1, p_mii_rxclk_1, p_mii_rxd_1, p_mii_rxdv_1, p_mii_rxer_1,
-        clk_mii_tx_1, p_mii_txclk_1, p_mii_txd_1, p_mii_txen_1,
-        clk_mii_ref, clk_smi, p_smi_mdc_0, p_smi_mdc_1, p_smi_mdio_0, p_smi_mdio_1, p_mii_resetn,
-        c_local_rx_in, c_local_tx, cWdog[0]
-        );
+    on stdcore[2]: {
+        int mac_address[2];
+		ethernet_getmac_otp(otp_data, otp_addr, otp_ctrl, (mac_address, char[]));
+		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
+        ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 1, tx, 1, null, null, null);
+        ethSwitch(tx[0], rx[0],null,null,tx[1], rx[1],null,null);
+    }
 
     
     //TODO we must find a way to select the correct led driver at startup - perhaps from flash??

@@ -20,14 +20,14 @@ APP_NAME =
 
 #XCC_FLAGS = -O3 -g -report 
 # lets' try to debug
-XCC_FLAGS = -O0 -g -report 
+XCC_FLAGS = -O0 -g -report -DMAC_CUSTOM_FILTER 
 
 EXCLUDE_FILES = bcmserver.xc
 
 
 # The USED_MODULES variable lists other module used by the application. 
 
-USED_MODULES = 
+USED_MODULES = module_ethernet module_locks
 
 #=============================================================================
 # The following part of the Makefile includes the common build infrastructure
