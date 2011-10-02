@@ -110,6 +110,7 @@ int main(void)
   streaming chan c_led_cmds_out, c_local_rx_out;
   chan cSpiFlash;
   chan cWdog[NUM_WATCHDOG_CHANS];
+  chan rx[2], tx[2];
 
   par
   {
@@ -117,10 +118,9 @@ int main(void)
 	//the internal 3 port ethernet switch
     on stdcore[2]: {
         int mac_address[2];
-		ethernet_getmac_otp(otp_data, otp_addr, otp_ctrl, (mac_address, char[]));
 		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
         ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 1, tx, 1, null, null, null);
-        ethSwitch(tx[0], rx[0],null,null,tx[1], rx[1],null,null);
+        ethSwitch(tx[0], tx[1],c_local_tx,rx[0], rx[1],c_local_rx_in,cWdog[0]);
     }
 
     
