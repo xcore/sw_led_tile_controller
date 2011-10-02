@@ -14,8 +14,25 @@
 #ifndef ETHSERVERPROCESS_H_
 #define ETHSERVERPROCESS_H_
 
+#include <xs1.h>
+#include <xccompat.h>
+
 #include "ethPkt.h"
-#include "getmac.h"
+
+//for comaptibility reasouns we keep the olde otp struct
+#define OTP_DATA_PORT XS1_PORT_32B
+#define OTP_ADDR_PORT XS1_PORT_16C
+#define OTP_CTRL_PORT XS1_PORT_16D
+
+#ifndef __XC__
+#define out // xccompat doesn't deal with `out' or `in' specifiers
+#endif
+
+struct otp_ports {
+  port data;
+  out port addr;
+  port ctrl;
+};
 
 // initAddresses
 // Initialise the addresses structure with the default MAC address and IP address
