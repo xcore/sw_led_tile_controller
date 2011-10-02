@@ -69,6 +69,7 @@ Required Repositories
 ================
 
 * xcommon git\@github.com:xcore/xcommon.git
+* sc_ethernet git://github.com/xcore/sc_ethernet.git
 
 Support
 =======
