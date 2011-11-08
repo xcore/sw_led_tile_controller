@@ -15,7 +15,6 @@
 #include <xs1.h>
 #include "xclib.h"
 #include "ethSwitch.h" 
-#include "miimain.h"
 #include "watchdog.h"
 #include "print.h"
 
@@ -25,7 +24,7 @@
 // Receive packet over channel and place in s_packet structure
 // Returns 1 for success, 0 for invalid packet
 #pragma unsafe arrays
-int ethPhyRx(streaming chanend c, s_packet &pkt, unsigned numbytes)
+int ethPhyRx( chanend c, s_packet &pkt, unsigned numbytes)
 {
 //  int null;
   int numwords = (numbytes >> 2) + 1;
@@ -100,7 +99,7 @@ void ethPhyTx(chanend cTx, s_packet &pkt, int &tstamp)
 }
 
 #pragma unsafe arrays
-void ethTx(streaming chanend cTx, s_packet &pkt)
+void ethTx( chanend cTx, s_packet &pkt)
 {
   int numwords = (pkt.plen_b + 3)>>2;
    
@@ -188,8 +187,8 @@ int correctPTPcheck(s_packet &pkt)
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(streaming chanend cExtRx0, streaming chanend cExtRx1, chanend cLocRx,
-                 streaming chanend cExtTx0, streaming chanend cExtTx1, chanend cLocTx,
+void ethSwitch( chanend cExtRx0,  chanend cExtRx1, chanend cLocRx,
+                  chanend cExtTx0,  chanend cExtTx1, chanend cLocTx,
                  chanend cWdog)
 {
   timer t;
@@ -316,28 +315,3 @@ void ethSwitch(streaming chanend cExtRx0, streaming chanend cExtRx1, chanend cLo
 
   
 }
-
-void ethernetSwitch3Port(clock clk_mii_rx_0 , in port p_mii_rxclk_0 , buffered in port:32 p_mii_rxd_0 , in port p_mii_rxdv_0 , in port p_mii_rxer_0,
-             clock clk_mii_tx_0 , in port p_mii_txclk_0 , buffered out port:32 p_mii_txd_0 , out port p_mii_txen_0 ,
-             clock clk_mii_rx_1 , in port p_mii_rxclk_1 , buffered in port:32 p_mii_rxd_1 , in port p_mii_rxdv_1 , in port p_mii_rxer_1,
-             clock clk_mii_tx_1 , in port p_mii_txclk_1 , buffered out port:32 p_mii_txd_1 , out port p_mii_txen_1 ,
-             clock clk_mii_ref, clock clk_smi, out port p_smi_mdc_0, out port p_smi_mdc_1,
-             port p_smi_mdio_0,    port p_smi_mdio_1, out port p_mii_resetn,
-             chanend cRx, chanend cTx, chanend cWdog)
-{
-  streaming chan c_mii_client_0, c_mii_tx_0, c_mii_client_1, c_mii_tx_1;
-  par
-  {
-    // Threads constrained by I/O or latency requirements
-    miimain(c_mii_client_0, c_mii_client_1, c_mii_tx_0, c_mii_tx_1,
-        clk_mii_rx_0, p_mii_rxclk_0, p_mii_rxd_0, p_mii_rxdv_0, p_mii_rxer_0,
-        clk_mii_tx_0, p_mii_txclk_0, p_mii_txd_0, p_mii_txen_0,
-        clk_mii_rx_1, p_mii_rxclk_1, p_mii_rxd_1, p_mii_rxdv_1, p_mii_rxer_1,
-        clk_mii_tx_1, p_mii_txclk_1, p_mii_txd_1, p_mii_txen_1,
-        clk_mii_ref, clk_smi, p_smi_mdc_0, p_smi_mdc_1, p_smi_mdio_0, p_smi_mdio_1, p_mii_resetn
-        );
-    ethSwitch(c_mii_client_0, c_mii_client_1, cTx,
-        c_mii_tx_0, c_mii_tx_1, cRx, cWdog);
-  }
-}
-

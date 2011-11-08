@@ -11,7 +11,7 @@
  *
  *
  **/                                   
-#include "getmac.h"
+#include "get_mac_addr.h"
 #include "ethPkt.h"
 #include "ethSwitch.h"
 #include "ethIp.h"
@@ -36,17 +36,13 @@ void initAddresses(s_addresses *addresses, struct otp_ports *otp_ports)
 #ifndef SIMULATION
   
   unsigned mac[2];
-  if (!getMacAddr(0, mac, otp_ports))
-  {
-    addresses->macAddress[0] = (byterev(mac[0]) >> 16) | (byterev(mac[1] >> 16));
-    addresses->macAddress[1] = byterev(mac[1]) >> 16;
-  }
-  else
+
+  //retrieve the mac address
+  getMacAddr(0, mac, otp_ports);
 #endif
-  {
-    addresses->macAddress[0] = 0x00972200;
-    addresses->macAddress[1] = 0x0000FE01;
-  }
+
+  //self assign an IP address
+  //TODO this is easier to find if it is defined in some header file
   addresses->ipAddress[0] = 192;
   addresses->ipAddress[1] = 168;
   addresses->ipAddress[2] = 0;

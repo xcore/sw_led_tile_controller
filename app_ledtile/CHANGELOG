@@ -1,6 +1,9 @@
 XMOS LED REFERENCE DESIGN CHANGELOG
 ----------------------------
 
+current beta
+	* adding MBI5031 driver
+
 15th October 2010 - 10.4.1 version
 
    * Fixed a build issue, where the distributed package contained temporary files from a previous build

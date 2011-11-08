@@ -1,0 +1,42 @@
+The MBI5031 driver is aimed to drive a very specific MBI5031 LED Matrix:
+It has a 1/16 scanning - so 4 address lines.
+
+The connection to the LED MODULE OUT CONNECTOR is:
+
+R0 - SDI_R (red MBI5031 data input)
+G0 - SDI_G (red MBI5031 data input)
+B0 - SDI_B (red MBI5031 data input)
+R1 - CS_IN Address CS
+B1 - A_IN Address A
+ADR0 - D_IN Address D
+ADR1 - C_IN Address C
+ADR2 - B_IN Address B
+CLK - DCLK_IN MBI5031 data clock
+LTCH - LE_IN MBI5031 LE
+GSCLK - GCLK_IN MBI5031 grayscale clock
+
+The adress is managed by 2 74HC138 with the following connections:
+
+#1 
+A_IN - A
+B_IN - B
+C_IN - C
+D_IN - !G2A
+CS_IN - !G1A
+VCC - G1
+
+#2
+A_IN - A
+B_IN - B
+C_IN - C
+D_IN - G1
+CS_IN - !G2B
+GND - !G2A
+
+Keep in mind that for each pin the following conditions must be met to write a value
+!G1A 0
+!g2A 0
+G 1
+
+to write adress 1-8 D, CS must be low
+to write address 9-16 CS must be low, D must be 1 

@@ -14,10 +14,16 @@
 #include <xs1.h>
 #include <platform.h>
 
+//ethernet stuff
+#include "ethernet_server.h"
+#include "ethernet_tx_client.h"
+#include "ethernet_rx_client.h"
+#include "getmac.h"
+
+
 #include "ledbuffer.h"
-#include "leddriver.h"
+#include "mbi5031.h"
 #include "led.h"
-#include "miimain.h"
 #include "ethSwitch.h"
 #include "ethServer.h"
 #include "pktbuffer.h"
@@ -25,45 +31,57 @@
 #include "flashmanager.h"
 #include "ledprocess.h"
 #include "misc.h"
+#include "mbi5031.h"
 
 
 // Ethernet Ports and Clock Blocks
 // -----------------------
 on stdcore[2]: clock clk_mii_ref                = XS1_CLKBLK_REF;
-on stdcore[2]: clock clk_mii_rx_0               = XS1_CLKBLK_1;
-on stdcore[2]: clock clk_mii_tx_0                              = XS1_CLKBLK_2;
-in port p_mii_rxclk_0                           = PORT_ETH_RXCLK_0;
-buffered in port:32 p_mii_rxd_0                 = PORT_ETH_RXD_0;
-in port p_mii_rxdv_0                            = PORT_ETH_RXDV_0;
-in port p_mii_rxer_0                            = PORT_ETH_RXER_0;
-in port p_mii_txclk_0                           = PORT_ETH_TXCLK_0;
-buffered out port:32 p_mii_txd_0                = PORT_ETH_TXD_0;
-out port p_mii_txen_0                           = PORT_ETH_TXEN_0;
 on stdcore[2]: clock clk_smi                    = XS1_CLKBLK_3;
-port p_smi_mdio_0                               = PORT_ETH_MDIO_0;
-out port p_smi_mdc_0                            = PORT_ETH_MDC_0;
-out port p_mii_resetn                           = PORT_ETH_RST_N;
 
-on stdcore[2]: clock clk_mii_rx_1               = XS1_CLKBLK_4;
-on stdcore[2]: clock clk_mii_tx_1               = XS1_CLKBLK_5;
-in port p_mii_rxclk_1                           = PORT_ETH_RXCLK_1;
-buffered in port:32 p_mii_rxd_1                 = PORT_ETH_RXD_1;
-in port p_mii_rxdv_1                            = PORT_ETH_RXDV_1;
-in port p_mii_rxer_1                            = PORT_ETH_RXER_1;
-in port p_mii_txclk_1                           = PORT_ETH_TXCLK_1;
-buffered out port:32 p_mii_txd_1                = PORT_ETH_TXD_1;
-out port p_mii_txen_1                           = PORT_ETH_TXEN_1;
-port p_smi_mdio_1                               = PORT_ETH_MDIO_1;
-out port p_smi_mdc_1                            = PORT_ETH_MDC_1;
+on stdcore[2]: mii_interface_t mii_0 =
+  {
+    XS1_CLKBLK_1,
+    XS1_CLKBLK_2,
+
+    PORT_ETH_RXCLK_0,
+    PORT_ETH_RXER_0,
+    PORT_ETH_RXD_0,
+    PORT_ETH_RXDV_0,
+
+    PORT_ETH_TXCLK_0,
+    PORT_ETH_TXEN_0,
+    PORT_ETH_TXD_0,
+  };
+
+on stdcore[2]: mii_interface_t mii_1 =
+  {
+    XS1_CLKBLK_4,
+    XS1_CLKBLK_5,
+
+    PORT_ETH_RXCLK_1,
+    PORT_ETH_RXER_1,
+    PORT_ETH_RXD_1,
+    PORT_ETH_RXDV_1,
+
+    PORT_ETH_TXCLK_1,
+    PORT_ETH_TXEN_1,
+    PORT_ETH_TXD_1,
+  };
+
+
+on stdcore[2]: out port p_mii_resetn = PORT_ETH_RST_N;
+on stdcore[2]: smi_interface_t smi_0 = { PORT_ETH_MDIO_0, PORT_ETH_MDC_0, 0 };
+on stdcore[2]: smi_interface_t smi_1 = { PORT_ETH_MDIO_1, PORT_ETH_MDC_1, 0 };
 
 // LED Tile Ports
 // -----------------------
 buffered out port:32 p_led_out_r0               = PORT_LED_OUT_R0;
 buffered out port:32 p_led_out_g0               = PORT_LED_OUT_G0;
 buffered out port:32 p_led_out_b0               = PORT_LED_OUT_B0;
-buffered out port:32 p_led_out_r1               = PORT_LED_OUT_R1;
-buffered out port:32 p_led_out_g1               = PORT_LED_OUT_G1;
-buffered out port:32 p_led_out_b1               = PORT_LED_OUT_B1;
+out port p_led_out_r1               			= PORT_LED_OUT_R1;
+out port p_led_out_g1               			= PORT_LED_OUT_G1;
+out port p_led_out_b1               			= PORT_LED_OUT_B1;
 out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
 buffered out port:32 p_led_out_ltch             = PORT_LED_OUT_LATCH;
@@ -79,6 +97,9 @@ out port p_flash_ss                             = PORT_SPI_SS;
 buffered out port:32 p_flash_clk                = PORT_SPI_CLK;
 buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 
+//enable or disable the watchdog
+#define WATCHDOG_ENABLED 0
+
 // Top level main
 int main(void)
 {
@@ -89,23 +110,24 @@ int main(void)
   streaming chan c_led_cmds_out, c_local_rx_out;
   chan cSpiFlash;
   chan cWdog[NUM_WATCHDOG_CHANS];
+  chan rx[2], tx[2];
+
   par
   {
     // Threads constrained by I/O or latency requirements
 	//the internal 3 port ethernet switch
-    on stdcore[2]: ethernetSwitch3Port(
-        clk_mii_rx_0, p_mii_rxclk_0, p_mii_rxd_0, p_mii_rxdv_0, p_mii_rxer_0,
-        clk_mii_tx_0, p_mii_txclk_0, p_mii_txd_0, p_mii_txen_0,
-        clk_mii_rx_1, p_mii_rxclk_1, p_mii_rxd_1, p_mii_rxdv_1, p_mii_rxer_1,
-        clk_mii_tx_1, p_mii_txclk_1, p_mii_txd_1, p_mii_txen_1,
-        clk_mii_ref, clk_smi, p_smi_mdc_0, p_smi_mdc_1, p_smi_mdio_0, p_smi_mdio_1, p_mii_resetn,
-        c_local_rx_in, c_local_tx, cWdog[0]
-        );
+    on stdcore[2]: {
+        int mac_address[2];
+		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
+        ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 2, tx, 2, null, null, null);
+        ethSwitch(tx[0], tx[1],c_local_tx,rx[0], rx[1],c_local_rx_in,cWdog[0]);
+    }
 
     
-    //the actual led driver outputting the data to the led hardware
-    on stdcore[0]: leddrive(c_led_data_out, c_led_cmds_out, cWdog[1],
-        p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_r1, p_led_out_g1, p_led_out_b1,
+    //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
+    //this needs to be done so taht each led driver can define & use the pins it wants to use
+    on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[1],
+        p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_g1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
     //the interface to the flash memory for config data
@@ -113,7 +135,7 @@ int main(void)
     
     // Unconstrained threads
     //a watchdog to reset the hardware if some thread has gone wild
-    on stdcore[1]: watchDog(cWdog, 1);
+    on stdcore[1]: watchDog(cWdog, 1, WATCHDOG_ENABLED);
 
     //the packetbuffer for the internal ethernet server (3rd port of the switch)
     on stdcore[2]: pktbuffer(c_local_rx_in, c_local_rx_out); 

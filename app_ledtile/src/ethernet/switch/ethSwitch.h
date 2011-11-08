@@ -21,7 +21,7 @@
 // Receive packet over channel and place in s_packet structure
 
 #ifdef __XC__
-int ethPhyRx(streaming chanend c,   s_packet &pkt,  unsigned numbytes);
+int ethPhyRx( chanend c,   s_packet &pkt,  unsigned numbytes);
 #else
 int ethPhyRx(unsigned c,   s_packet *pkt,  unsigned numbytes);
 #endif
@@ -38,8 +38,8 @@ void ethPhyTx(unsigned c,  s_packet *pkt,  int *tstamp);
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #ifdef __XC__
-void ethSwitch(streaming chanend cRx0, streaming chanend cRx1, chanend cRx2,
-    streaming chanend cTx0, streaming chanend cTx1, chanend cTx2, chanend cWdog);
+void ethSwitch( chanend cRx0,  chanend cRx1, chanend cRx2,
+     chanend cTx0,  chanend cTx1, chanend cTx2, chanend cWdog);
 #else
 void ethSwitch(unsigned cRx0, unsigned cRx1, unsigned cRx2,
                  unsigned cTx0, unsigned cTx1, unsigned cTx2, unsigned cWdog);
@@ -47,14 +47,5 @@ void ethSwitch(unsigned cRx0, unsigned cRx1, unsigned cRx2,
 
 #endif /*__ETHPHY_H__*/
 
-#ifdef __XC__
-void ethernetSwitch3Port(clock clk_mii_rx_0 , in port p_mii_rxclk_0 , buffered in port:32 p_mii_rxd_0 , in port p_mii_rxdv_0 , in port p_mii_rxer_0,
-             clock clk_mii_tx_0 , in port p_mii_txclk_0 , buffered out port:32 p_mii_txd_0 , out port p_mii_txen_0 ,
-             clock clk_mii_rx_1 , in port p_mii_rxclk_1 , buffered in port:32 p_mii_rxd_1 , in port p_mii_rxdv_1 , in port p_mii_rxer_1,
-             clock clk_mii_tx_1 , in port p_mii_txclk_1 , buffered out port:32 p_mii_txd_1 , out port p_mii_txen_1 ,
-             clock clk_mii_ref, clock clk_smi, out port p_smi_mdc_0, out port p_smi_mdc_1,
-             port p_smi_mdio_0,    port p_smi_mdio_1, out port p_mii_resetn,
-             chanend cRx, chanend cTx, chanend cWdog);
-#endif
 
 

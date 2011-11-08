@@ -27,7 +27,7 @@
 #include "flashclient.h"
 #include "chanabs.h"
 #include "math.h"
-#include "ledbufferclient.h"
+#include "ledbufferwriter.h"
 #include "pktbufferclient.h"
 
 
@@ -109,6 +109,7 @@ void ethOtherProcess(s_packet *packet, unsigned cTx, unsigned cLedData, unsigned
           {
             case (XMOS_VERSION):
             {
+            	//TODO this is a guarantee to crash the network thread - please return something reasonable
               while (1);
             }
             break;

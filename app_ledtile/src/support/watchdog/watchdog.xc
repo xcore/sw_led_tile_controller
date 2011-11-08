@@ -28,7 +28,7 @@
  * Parameters
  * slow - if the thread should run at 100/32Mhz (??), if set, or full speed
  */
-void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slow)
+void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slow, int enabled)
 {
   //the timer & time to schedule the watchdog activities
   timer t;
@@ -67,13 +67,10 @@ void watchDog(chanend c[NUM_WATCHDOG_CHANS], int slow)
             }
           }
           printintln(dog_kicked);
-#ifdef RELEASE
-          //reboot
-          chipReset();
-#else
-          //halt the watchdog
-          while (1); //TODO - is that an useful behaviour
-#endif
+          if (enabled) {
+        	  //reboot
+        	  chipReset();
+          }
         }
         //reset the thread notfication bit field
         dog_kicked = 0;

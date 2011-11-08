@@ -17,8 +17,9 @@
 #include "ledprocess.h"
 #include "print.h"
 
-
+//8 bit color intensity adjustements
 unsigned char intensityadjust[3] = {0xFF, 0xFF, 0xFF};
+//16 bit gamma look up table
 unsigned short gammaLUT[3][256];
 
 #pragma unsafe arrays
@@ -59,8 +60,9 @@ int ledprocess_commands(streaming chanend cLedCmd, streaming chanend cOut, int o
         cLedCmd :> colchan;
 
         cmdlen -= 2;
-        if (cmdlen >= 256)
+        if (cmdlen > 256) {
           cmdlen = 256;
+        }
         for (int i=0; i < cmdlen; i++)
         {
           int data;

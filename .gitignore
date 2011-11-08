@@ -7,3 +7,6 @@
 *.xi
 *.i
 *.a
+
+#mac stuff
+.DS_Store

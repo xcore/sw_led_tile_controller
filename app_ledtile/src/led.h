@@ -34,7 +34,8 @@
 //#define OCTAL_INDOOR_16x32_MBI5030
 //#define HEX_INDOOR_16x32_MBI5030
 //#define SINGLE_OUTDOOR_16x16_MBI5026
-#define SINGLE_INDOOR_16x32_MBI5030C
+//#define SINGLE_INDOOR_16x32_MBI5030C
+#define SINGLE_INDOOR_16x16_MBI5031
 //#define TILE_OTHER
 
 #ifdef TILE_OTHER
@@ -100,6 +101,13 @@
   #define MBI5030C
 #endif
 
+
+#ifdef SINGLE_INDOOR_16x16_MBI5031
+  #define INDOOR_16x16
+  #define SINGLE
+  #define MBI5031
+#endif
+
 #ifdef QUAD_INDOOR_16x32_MBI5030
   #define INDOOR_16x32
   #define QUAD
@@ -129,6 +137,15 @@
 #define MODULE_WIDTH                         (16)
 #define MODULE_HEIGHT                        (32)
 #define CHAIN_LENGTH                          (32)
+#define CHAIN_LOOPBACK_X                      (1)
+#define CHAIN_LOOPBACK_Y                      (1)
+#endif
+
+#ifdef INDOOR_16x16
+#define SCAN_RATE                             (16)
+#define MODULE_WIDTH                         (16)
+#define MODULE_HEIGHT                        (16)
+#define CHAIN_LENGTH                          (16)
 #define CHAIN_LOOPBACK_X                      (1)
 #define CHAIN_LOOPBACK_Y                      (1)
 #endif
@@ -171,6 +188,9 @@
 #ifdef MBI5030C
 #define LEDS_PER_DRIVER                      (16)
 #define MBI5030
+#endif
+#ifdef MBI5031
+#define LEDS_PER_DRIVER                      (16)
 #endif
 
 #define FRAME_HEIGHT         (MODULE_HEIGHT * NUM_MODULES_Y) // Height of frame in pixels

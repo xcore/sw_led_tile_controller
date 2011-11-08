@@ -14,35 +14,28 @@
 #include <xs1.h>
 #include <xclib.h>
 #include "led.h"
-// Gives us FRAME_HEIGHT and FRAME_WIDTH
+#include "ledbuffercalculations.h"
+#include "logo.h"
 
-#define FRAME_SIZE     (FRAME_HEIGHT * FRAME_WIDTH)
-#define BUFFER_SIZE    (2 * FRAME_SIZE)
 #define SWAP(a,b)      {a -= b; b += a; a = b - a;}
-//what data to store in the buffer - TODO does not seem to be used - remove or use
-#define BUFFER_TYPE    unsigned
 //should the buffer be rotate by 90 degrees while outputing data
 //by default no - since the data is fed in and put out by columns
 //TODO shouldn't the driver decide this??
-#define NOROTATE
+//#define NOROTATE
 
 //----Possible test patterns-----
 #ifndef SIMULATION
 
 //#define SINGLELINETEST
-//#define SHADETESTX
+#define SHADETESTX
 //#define SHADETESTY
-//#define GAMMATEST
-#define LOGO
+//#define GAMMATEST 100
+//#define LOGO
 
 #endif
 
-//the storage of the XMOS logo
-extern unsigned char xmossmall_raw[];
-#define SHIFT 0x01000000
+//default color for gamma test (or something similar)
 #define DIV 1
-#define LOGO_HEIGHT 64
-#define LOGO_WIDTH  32
 
 // ------------------------------
 //TODO is the unsafe array needed?
@@ -53,7 +46,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   // Frame is stored with in columns (original bitmap xy swapped)
   // This allows outputting one column at a time in a simple loop
   //the size is defined by width * heigt * 3 (rgb) *2 (double buffer)
-  unsigned char buffer[BUFFER_SIZE*3];
+  unsigned char buffer[LED_BUFFER_BUFFER_SIZE];
 
   //a marker variable if the buffer sink (i.e led driver) allowed to swap the buffers
   //i.e. are all values rendered from the first buffer to prevent image tearing
@@ -61,7 +54,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   //the part of the buffer to write to
   unsigned inbufptr=0;
   //the part of the buffer to read from
-  unsigned outbufptr=FRAME_SIZE*3;
+  unsigned outbufptr=LED_BUFFER_FRAME_SIZE;
   
   
   // Initialise the buffer to the specified test pattern
@@ -69,7 +62,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   {
     unsigned ptr = 0;
 #ifndef SIMULATION
-    for (int buf=0; buf < 3 * BUFFER_SIZE; buf++)
+    for (int buf=0; buf < LED_BUFFER_BUFFER_SIZE; buf++)
       buffer[buf] = 0;
 #endif
     
@@ -80,7 +73,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   	  {
   	    for (int x=0; x < FRAME_WIDTH; x++)
   	    {
-          for (int c=0; c < 3; c++)
+          for (int c=0; c < LED_BUFFER_COLORS; c++)
           {
             buffer[ptr] = 0xFF * (y==1); 
             ptr++;
@@ -95,7 +88,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
       {
         for (int x=0; x < FRAME_WIDTH; x++)
         {
-          for (int c=0; c < 3; c++)
+          for (int c=0; c < LED_BUFFER_COLORS; c++)
           {
             buffer[ptr] = (( 0xFF * x ) / (FRAME_WIDTH - 1)); 
             ptr++;
@@ -110,7 +103,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
       {
         for (int x=0; x < FRAME_WIDTH; x++)
         {
-          for (int c=0; c < 3; c++)
+          for (int c=0; c < LED_BUFFER_COLORS; c++)
           {
             buffer[ptr] = ((0xFF * y) / ((FRAME_HEIGHT - 1))); 
             ptr++;
@@ -125,7 +118,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
       {
         for (int x=0; x < FRAME_WIDTH; x++)
         {
-          for (int c=0; c < 3; c++)
+          for (int c=0; c < LED_BUFFER_COLORS; c++)
           {
             if (y < FRAME_HEIGHT >> 1)
             {
@@ -153,7 +146,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
       {
         for (int x=0; x<FRAME_WIDTH; x++)
         {
-          for (int c=0; c < 3; c++)
+          for (int c=0; c < LED_BUFFER_COLORS; c++)
           {
             int ptrx, ptr2;
             
@@ -163,12 +156,14 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
             ptrx = (x % LOGO_WIDTH) * LOGO_HEIGHT ;            
 #endif
 #if LOGO_HEIGHT > FRAME_HEIGHT
-            ptr2 = (ptrx + ((FRAME_HEIGHT - 1 - y)*(LOGO_HEIGHT / FRAME_HEIGHT))) * 3 + c;
+            ptr2 = (ptrx + ((FRAME_HEIGHT - 1 - y)*(LOGO_HEIGHT / FRAME_HEIGHT))) * LED_BUFFER_COLORS + c;
 #else
-            ptr2 = (ptrx + ((FRAME_HEIGHT - 1 - y)%LOGO_HEIGHT)) * 3 + c;
+            ptr2 = (ptrx + ((FRAME_HEIGHT - 1 - y)%LOGO_HEIGHT)) * LED_BUFFER_COLORS + c;
 #endif                        
+            //copy over the logo
             buffer[ptr] = xmossmall_raw[ptr2];
-            buffer[FRAME_SIZE*3 + ptr] = buffer[ptr];
+            //and put it in the 2nd buffer too
+            buffer[LED_BUFFER_FRAME_SIZE + ptr] = buffer[ptr];
             ptr++;
           }
         }
@@ -187,7 +182,9 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
 #pragma ordered
     select
     {
-      // Sink request of pixel data (send data to the led driver)
+        // Sink request of pixel data (send data to the led driver)
+    	//the pixelpointer contains -1 for a new image
+    	//or the column/row number
       case cOut :> pixelptr:
         if (pixelptr == -1)
         {
@@ -204,18 +201,23 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           // Request for data received by display driver
           // Entire column sent in response
           // Move ptr to required frame
+        	//TODO why is it outputed as 32 bit with 0GBR??
 #ifdef NOROTATE
-          //output the data column wise
-          pixelptr *= FRAME_HEIGHT;
+          //output the data row wise
+          pixelptr = LED_BUFFER_ROW(pixelptr);
           pixelptr += outbufptr;
-          for (int i=0; i<FRAME_HEIGHT; i++)
+          for (int i=0; i<FRAME_WIDTH; i++)
           {
-            cOut <: buffer[pixelptr];
-            pixelptr++;
+              cOut <: (char)buffer[pixelptr+2];
+              cOut <: (char)buffer[pixelptr+1];
+              cOut <: (char)buffer[pixelptr];
+              cOut <: (char)0;
+              //move to the next pixel in the row
+              pixelptr += LED_BUFFER_COLORS;
           }
 #else
-          //output the data row wise
-          pixelptr *= 3;
+          //output the data column wise
+          pixelptr *= LED_BUFFER_COLORS;
           pixelptr += outbufptr;
           for (int i=0; i<FRAME_HEIGHT; i++)
           {
@@ -224,7 +226,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
             cOut <: (char)buffer[pixelptr];
             cOut <: (char)0;
             //move to the next pixel in the row
-            pixelptr += FRAME_WIDTH * 3;
+            pixelptr += LED_BUFFER_ROW_SIZE;
           }
 #endif
         }
@@ -248,7 +250,7 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
           cIn :> len;
           
           //TODO this should we reworked using defines - hard to understand math
-          pixelptr *= 3;
+          pixelptr = LED_BUFFER_BUFFER_BYTE_POSITION(pixelptr);
           pixelptr += inbufptr;
           //write the pixel data to the buffer
           while (len > 0)
@@ -257,8 +259,8 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
             cIn :> buffer[pixelptr+1];
             cIn :> buffer[pixelptr];
             
-            pixelptr+=3;
-            len-=3;
+            pixelptr+=LED_BUFFER_COLORS;
+            len-=LED_BUFFER_COLORS;
           }
         }
       }:
