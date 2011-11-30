@@ -142,7 +142,7 @@ int main(void)
     on stdcore[1]: watchDog(cWdog, 1, WATCHDOG_ENABLED);
 
     //the packetbuffer for the internal ethernet server (3rd port of the switch)
-    on stdcore[2]: pktbuffer(c_local_rx_in, c_local_rx_out); 
+    on stdcore[3]: pktbuffer(c_local_rx_in, c_local_rx_out);
     //the ethernet server itself
     on stdcore[3]: ethServer(c_local_rx_out, c_local_tx, c_led_data_in, c_led_cmds_in, cSpiFlash, cWdog[2]);
     // apacket buffer buffering the led commmands
