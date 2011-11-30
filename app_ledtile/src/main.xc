@@ -120,6 +120,8 @@ int main(void)
         int mac_address[2];
 		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
         ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 2, tx, 2, smi_0, smi_1, null);
+    }
+    on stdcore[2]: {
         ethSwitch(rx[0], rx[1], c_local_rx_in,
         		  tx[0], tx[1],c_local_tx,
         		  cWdog[0]);
