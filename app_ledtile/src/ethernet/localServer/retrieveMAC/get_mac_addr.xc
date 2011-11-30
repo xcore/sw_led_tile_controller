@@ -17,7 +17,7 @@
 #include "get_mac_addr.h"
 #include "getmac.h"
 
-void getMacAddr(unsigned MACAddrNum, int macAddr[2], struct otp_ports &ports)
+void getMacAddr(unsigned MACAddrNum, int macAddr[6], struct otp_ports &ports)
 {
 	ethernet_getmac_otp_indexed(ports.data, ports.addr, ports.ctrl, macAddr, MACAddrNum);
 }

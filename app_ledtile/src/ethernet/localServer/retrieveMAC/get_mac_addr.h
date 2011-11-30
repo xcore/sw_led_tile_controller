@@ -36,6 +36,6 @@ struct otp_ports {
 // - macAddr - destination array for MAC address
 // - returns 0 for success
 // REFERENCE_PARAM expands to `&' in XC and `*' in C
-void getMacAddr(unsigned macAddrNum, int macAddr[2], REFERENCE_PARAM(struct otp_ports, ports));
+void getMacAddr(unsigned macAddrNum, int macAddr[6], REFERENCE_PARAM(struct otp_ports, ports));
 
 #endif

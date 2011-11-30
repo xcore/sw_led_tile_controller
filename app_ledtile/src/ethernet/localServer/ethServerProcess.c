@@ -35,7 +35,7 @@ void initAddresses(s_addresses *addresses, struct otp_ports *otp_ports)
 {
 #ifndef SIMULATION
   
-  unsigned mac[2];
+  int mac[6];
 
   //retrieve the mac address
   getMacAddr(0, mac, otp_ports);
