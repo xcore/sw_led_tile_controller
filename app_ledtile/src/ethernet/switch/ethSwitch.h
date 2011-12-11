@@ -15,36 +15,15 @@
 #ifndef __ETHPHY_H__
 #define __ETHPHY_H__
 
-#include "ethPkt.h"
-
-// ethPhyRx
-// Receive packet over channel and place in s_packet structure
-
-#ifdef __XC__
-int ethPhyRx( chanend c,   s_packet &pkt,  unsigned numbytes);
-#else
-int ethPhyRx(unsigned c,   s_packet *pkt,  unsigned numbytes);
-#endif
-
-// ethPhyTx
-// Send packet over channel from s_packet structure
-#ifdef __XC__
-void ethPhyTx(chanend cTx, s_packet &pkt, int &tstamp);
-#else
-void ethPhyTx(unsigned c,  s_packet *pkt,  int *tstamp);
-#endif
-
 // ethSwitch
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #ifdef __XC__
-void ethSwitch( chanend cExtRx0,  chanend cExtRx1, chanend cLocRx,
-        chanend cExtTx0,  chanend cExtTx1, chanend cLocTx,
-       chanend cWdog);
+void ethSwitch( chanend cExtRx,  chanend cLocRx,
+        chanend cExtTx,  chanend cLocTx);
 #else
-void ethSwitch( unsigned cExtRx0,  unsigned cExtRx1, unsigned cLocRx,
-        unsigned cExtTx0,  unsigned cExtTx1, unsigned cLocTx,
-       unsigned cWdog);
+void ethSwitch( unsigned cExtRx,  unsigned cLocRx,
+        unsigned cExtTx,  unsigned cLocTx);
 #endif
 
 #endif /*__ETHPHY_H__*/

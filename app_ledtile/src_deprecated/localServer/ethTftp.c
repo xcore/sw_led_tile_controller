@@ -64,7 +64,8 @@ void transmitTftp(s_packet *p, s_packetTftp *t, unsigned cTx, unsigned blocknum,
   udpChecksum((s_packetUdp *)i->payload);
   ipChecksum(i);
 
-  ethPhyTx(cTx, p, &null);
+  //TODO this is deprecated & has to be change
+  //  ethPhyTx(cTx, p, &null);
 }
 
 // processTftp

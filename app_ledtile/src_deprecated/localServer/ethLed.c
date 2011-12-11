@@ -58,7 +58,8 @@ void sendACforwardPackets(s_packet *packet, s_addresses *addresses, unsigned cTx
     x->payload[7]++;
     udpChecksum(u);
     ipChecksum(i);
-    ethPhyTx(cTx, packet, &null);
+    //TODO this is deprecated & has to be change
+    //ethPhyTx(cTx, packet, &null);
     x->payload[7]--;
   }
   
@@ -69,7 +70,8 @@ void sendACforwardPackets(s_packet *packet, s_addresses *addresses, unsigned cTx
     i->ttl = 255;
     udpChecksum(u);
     ipChecksum(i);
-    ethPhyTx(cTx, packet, &null);
+    //TODO this is deprecated & has to be change
+    //ethPhyTx(cTx, packet, &null);
     x->payload[6]--;
   }  
 }
@@ -236,7 +238,8 @@ void ethOtherProcess(s_packet *packet, unsigned cTx, unsigned cLedData, unsigned
               packet->plen_b = 60;
               udpChecksum(u);
               ipChecksum(i);
-              ethPhyTx(cTx, packet, &null);
+              //TODO this is deprecated & has to be change
+              //ethPhyTx(cTx, packet, &null);
             break;
             case (XMOS_AC_2):
               // If we think we are at the beginning of this chain

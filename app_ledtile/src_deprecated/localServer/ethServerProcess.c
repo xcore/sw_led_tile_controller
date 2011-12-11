@@ -100,7 +100,8 @@ void ethServerProcess(s_packet *packet, unsigned cTx, unsigned cOther0, unsigned
         memswap(i->dest, i->source , 4);
         
         // Transmit packet in direction it came from
-        ethPhyTx(cTx, packet, &null);
+        //TODO this is deprecated & has to be change
+        //        ethPhyTx(cTx, packet, &null);
       }
     }
   }
@@ -136,7 +137,8 @@ void ethServerProcess(s_packet *packet, unsigned cTx, unsigned cOther0, unsigned
           memcpy((void*)m->sourcemac, (void*)addresses->macAddress, 6);
           
           // Tranmit packet in direction it came from
-          ethPhyTx(cTx, packet, &null);
+          //TODO this is deprecated & has to be change
+          //          ethPhyTx(cTx, packet, &null);
         }
       }
     }

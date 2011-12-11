@@ -110,7 +110,7 @@ int main(void)
   streaming chan c_led_cmds_out, c_local_rx_out;
   chan cSpiFlash;
   chan cWdog[NUM_WATCHDOG_CHANS];
-  chan rx[2], tx[2];
+  chan rx[1], tx[1];
 
   par
   {
@@ -119,12 +119,11 @@ int main(void)
     on stdcore[2]: {
         int mac_address[2];
 		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
-        ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 2, tx, 2, smi_0, smi_1, null);
+        ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 1, tx, 1, smi_0, smi_1, null);
     }
     on stdcore[2]: {
-        ethSwitch(rx[0], rx[1], c_local_rx_in,
-        		  tx[0], tx[1],c_local_tx,
-        		  cWdog[0]);
+        ethSwitch(rx[0], c_local_rx_in,
+        		  tx[0], c_local_tx);
     }
 
     
