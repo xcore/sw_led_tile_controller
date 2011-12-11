@@ -38,11 +38,13 @@ void ethPhyTx(unsigned c,  s_packet *pkt,  int *tstamp);
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #ifdef __XC__
-void ethSwitch( chanend cRx0,  chanend cRx1, chanend cRx2,
-     chanend cTx0,  chanend cTx1, chanend cTx2, chanend cWdog);
+void ethSwitch( chanend cExtRx0,  chanend cExtRx1, chanend cLocRx,
+        chanend cExtTx0,  chanend cExtTx1, chanend cLocTx,
+       chanend cWdog);
 #else
-void ethSwitch(unsigned cRx0, unsigned cRx1, unsigned cRx2,
-                 unsigned cTx0, unsigned cTx1, unsigned cTx2, unsigned cWdog);
+void ethSwitch( unsigned cExtRx0,  unsigned cExtRx1, unsigned cLocRx,
+        unsigned cExtTx0,  unsigned cExtTx1, unsigned cLocTx,
+       unsigned cWdog);
 #endif
 
 #endif /*__ETHPHY_H__*/
