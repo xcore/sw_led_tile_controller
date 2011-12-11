@@ -145,7 +145,7 @@ int main(void)
     //TODO this was on core 2 - for a reason, is there a way to go back? (it makes sense to have this BEFORE the channel)
     on stdcore[3]: pktbuffer(c_local_rx_in, c_local_rx_out);
     //the ethernet server itself
-    on stdcore[3]: ethServer(c_local_rx_out, c_local_tx, c_led_data_in, c_led_cmds_in, cSpiFlash, cWdog[2]);
+    //on stdcore[3]: ethServer(c_local_rx_out, c_local_tx, c_led_data_in, c_led_cmds_in, cSpiFlash, cWdog[2]);
     // apacket buffer buffering the led commmands
     on stdcore[3]: pktbuffer(c_led_cmds_in, c_led_cmds_out);
     //the central pixel buffer
