@@ -20,6 +20,7 @@
 #include <platform.h>
 #include <stdlib.h>
 #include "icmp.h"
+#include "ethernet_conf.h"
 
 int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_mac_addr[6])
 {
@@ -105,23 +106,30 @@ int is_valid_icmp_packet(const unsigned char rxbuf[], int nbytes)
   if (rxbuf[23] != 0x01)
     return 0;
 
+#ifdef ETHERNET_DEBUG_OUTPUT
   printstr("ICMP packet received\n");
-
+#endif
   if ((rxbuf, const unsigned[])[3] != 0x00450008)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid et_ver_hdrl_tos\n");
+#endif
     return 0;
   }
   if (((rxbuf, const unsigned[])[8] >> 16) != 0x0008)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid type_code\n");
+#endif
     return 0;
   }
   for (int i = 0; i < 4; i++)
   {
     if (rxbuf[30 + i] != own_ip_addr[i])
     {
+#ifdef ETHERNET_DEBUG_OUTPUT
       printstr("Not for us\n");
+#endif
       return 0;
     }
   }
@@ -129,14 +137,18 @@ int is_valid_icmp_packet(const unsigned char rxbuf[], int nbytes)
   totallen = byterev((rxbuf, const unsigned[])[4]) >> 16;
   if (nbytes > 60 && nbytes != totallen + 14)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid size\n");
     printintln(nbytes);
     printintln(totallen+14);
+#endif
     return 0;
   }
   if (checksum_ip(rxbuf) != 0)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Bad checksum\n");
+#endif
     return 0;
   }
 

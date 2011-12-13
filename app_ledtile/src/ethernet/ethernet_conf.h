@@ -13,4 +13,6 @@
 
 #define NUM_ETHERNET_PORTS (2)
 
+//the chattyness of the helper functions
+#define ETHERNET_DEBUG_OUTPUT
 

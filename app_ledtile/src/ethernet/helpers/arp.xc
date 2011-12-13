@@ -20,6 +20,7 @@
 #include <platform.h>
 #include <stdlib.h>
 #include "arp.h"
+#include "ethernet_conf.h"
 
 int build_arp_response(unsigned char rxbuf[], unsigned int txbuf[], const unsigned char own_mac_addr[6])
 {
@@ -72,29 +73,39 @@ int is_valid_arp_packet(const unsigned char rxbuf[], int nbytes)
   if (rxbuf[12] != 0x08 || rxbuf[13] != 0x06)
     return 0;
 
+#ifdef ETHERNET_DEBUG_OUTPUT
   printstr("ARP packet received\n");
+#endif
 
   if ((rxbuf, const unsigned[])[3] != 0x01000608)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid et_htype\n");
+#endif
     return 0;
   }
   if ((rxbuf, const unsigned[])[4] != 0x04060008)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid ptype_hlen\n");
+#endif
     return 0;
   }
   if (((rxbuf, const unsigned[])[5] & 0xFFFF) != 0x0100)
   {
+#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Not a request\n");
+#endif
     return 0;
   }
   for (int i = 0; i < 4; i++)
   {
     if (rxbuf[38 + i] != own_ip_addr[i])
     {
-      printstr("Not for us\n");
-      return 0;
+#ifdef ETHERNET_DEBUG_OUTPUT
+     printstr("Not for us\n");
+#endif
+     return 0;
     }
   }
 
