@@ -21,6 +21,20 @@
 #include <stdlib.h>
 #include "icmp.h"
 #include "ethernet_conf.h"
+#include "ethernet_tx_client.h"
+
+void handle_icmp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+		unsigned int nbytes) {
+	if (is_valid_icmp_packet(rxbuf, nbytes))
+	      {
+	        build_icmp_response(rxbuf, (txbuf, unsigned char[]), own_mac_addr);
+	        //todo is it a good idea to write out the package here, or should it be done centrally?
+	        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+#ifdef ETHERNET_DEBUG_OUTPUT
+	        printstr("ICMP response sent\n");
+#endif
+	      }
+}
 
 int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_mac_addr[6])
 {
