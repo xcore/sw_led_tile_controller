@@ -21,7 +21,20 @@
 #include <stdlib.h>
 #include "arp.h"
 #include "ethernet_conf.h"
+#include "ethernet_tx_client.h"
 
+void handle_arp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+unsigned int nbytes) {
+    if (is_valid_arp_packet(rxbuf, nbytes))
+      {
+        build_arp_response(rxbuf, txbuf, own_mac_addr);
+        //TODO is that a good idea to have it here or should we rely on the fact that those functions just prepare the responses
+        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+#ifdef ETHERNET_DEBUG_OUTPUT
+        printstr("ARP response sent\n");
+#endif
+      }
+}
 int build_arp_response(unsigned char rxbuf[], unsigned int txbuf[], const unsigned char own_mac_addr[6])
 {
   unsigned word;
