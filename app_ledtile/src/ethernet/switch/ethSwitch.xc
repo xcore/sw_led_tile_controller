@@ -14,7 +14,6 @@
 
 #include <xs1.h>
 #include "xclib.h"
-#include "ethSwitch.h" 
 #include "print.h"
 #include "ethernet_server.h"
 #include "ethernet_tx_client.h"
@@ -24,6 +23,10 @@
 #include "arp.h"
 #include "icmp.h"
 #include "otp_data.h"
+#include "smi.h"
+#include "mii.h"
+
+#include "ethSwitch.h"
 
 //local prototypes
 void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
@@ -33,23 +36,22 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
 		mii_interface_t &mii1, struct otp_ports& otp_ports) {
 
-	int mac_address[2];
 	unsigned char ip_address[4];
 	chan rx[1], tx[1];
 
 	//initialize the networking interfaces
 	phy_init_two_port(clk_smi, p_mii_resetn, smi0, smi1, mii0, mii1);
 	//initialize the mac & ip addresses
-	initAddresses(mac_address,ip_address,otp_ports);
+	initAddresses(own_mac_addr,own_ip_address,otp_ports);
 
 	//let's really start the servers
 	par
 	{
 		//the ethernet server
-		ethernet_server_two_port(mii0, mii1, mac_address, rx, 1, tx, 1,
+		ethernet_server_two_port(mii0, mii1, own_mac_addr, rx, 1, tx, 1,
 				smi0, smi1, null);
 		//and the local stuff
-		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx);
+		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, ip_address, own_mac_addr);
 	}
 }
 
