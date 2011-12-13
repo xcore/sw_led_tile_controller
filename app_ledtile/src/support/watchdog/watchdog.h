@@ -25,7 +25,7 @@
 #ifndef WATCHDOG_H_
 #define WATCHDOG_H_
 
-#define NUM_WATCHDOG_CHANS 3
+#define NUM_WATCHDOG_CHANS 1
 
 /*
  * WATCHDOG

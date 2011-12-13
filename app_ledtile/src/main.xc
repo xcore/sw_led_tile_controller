@@ -129,7 +129,7 @@ int main(void)
     
     //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
     //this needs to be done so taht each led driver can define & use the pins it wants to use
-    on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[1],
+    on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[0],
         p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_g1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
