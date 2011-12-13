@@ -30,6 +30,7 @@
 void ethSwitch(chanend cExtRx, chanend cLocRx,
 		chanend cExtTx, chanend cLocTx) {
 	unsigned int rxbuffer[1600 / 4];
+	unsigned int txbuffer[1600 / 4];
 	unsigned int src_port;
 	unsigned int nbytes;
 
