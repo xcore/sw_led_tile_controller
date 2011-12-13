@@ -24,8 +24,6 @@
 #include "ledbuffer.h"
 #include "mbi5031.h"
 #include "led.h"
-#include "ethSwitch.h"
-#include "ethServer.h"
 #include "pktbuffer.h"
 #include "watchdog.h"
 #include "flashmanager.h"
@@ -33,6 +31,8 @@
 #include "misc.h"
 #include "mbi5031.h"
 #include "otp_data.h"
+#include "ethSwitch.h"
+#include "ethServer.h"
 
 
 // Ethernet Ports and Clock Blocks
