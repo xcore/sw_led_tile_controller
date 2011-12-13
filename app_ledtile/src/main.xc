@@ -32,6 +32,7 @@
 #include "ledprocess.h"
 #include "misc.h"
 #include "mbi5031.h"
+#include "otp_data.h"
 
 
 // Ethernet Ports and Clock Blocks
@@ -97,6 +98,9 @@ out port p_flash_ss                             = PORT_SPI_SS;
 buffered out port:32 p_flash_clk                = PORT_SPI_CLK;
 buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 
+//the otp data structure
+struct otp_ports otp = {OTP_DATA_PORT, OTP_ADDR_PORT, OTP_CTRL_PORT};
+
 //enable or disable the watchdog
 #define WATCHDOG_ENABLED 0
 
@@ -117,13 +121,7 @@ int main(void)
     // Threads constrained by I/O or latency requirements
 	//the internal 3 port ethernet switch
     on stdcore[2]: {
-        int mac_address[2];
-		phy_init_two_port(clk_smi, p_mii_resetn, smi_0, smi_1, mii_0, mii_1);
-        ethernet_server_two_port(mii_0, mii_1, mac_address, rx, 1, tx, 1, smi_0, smi_1, null);
-    }
-    on stdcore[2]: {
-        ethSwitch(rx[0], c_local_rx_in,
-        		  tx[0], c_local_tx);
+    	startEthServer(c_local_tx,c_local_rx_in,clk_smi,p_mii_resetn,smi_0,smi_1,mii_0,mii_1,otp);
     }
 
     

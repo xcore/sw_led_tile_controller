@@ -19,16 +19,47 @@
 #include "ethernet_server.h"
 #include "ethernet_tx_client.h"
 #include "ethernet_rx_client.h"
+#include "get_mac_addr.h"
 #include "getmac.h"
 #include "arp.h"
 #include "icmp.h"
+#include "otp_data.h"
+
+//local prototypes
+void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const unsigned char own_mac_addr[6]);
+
+void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out port ?p_mii_resetn,
+		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
+		mii_interface_t &mii1, struct otp_ports& otp_ports) {
+
+	int mac_address[2];
+	unsigned char ip_address[4];
+	chan rx[1], tx[1];
+
+	//initialize the networking interfaces
+	phy_init_two_port(clk_smi, p_mii_resetn, smi0, smi1, mii0, mii1);
+	//initialize the mac & ip addresses
+	initAddresses(mac_address,ip_address,otp_ports);
+
+	//let's really start the servers
+	par
+	{
+		//the ethernet server
+		ethernet_server_two_port(mii0, mii1, mac_address, rx, 1, tx, 1,
+				smi0, smi1, null);
+		//and the local stuff
+		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx);
+	}
+}
+
+
 
 // ethSwitch
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(chanend cExtRx, chanend cLocRx,
-		chanend cExtTx, chanend cLocTx) {
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const unsigned char own_mac_addr[6]) {
 	unsigned int rxbuffer[1600 / 4];
 	unsigned int txbuffer[1600 / 4];
 	unsigned int src_port;
@@ -41,4 +72,22 @@ void ethSwitch(chanend cExtRx, chanend cLocRx,
 		handle_arp_package(rxbuffer, txbuffer,src_port, nbytes);
 		handle_icmp_package(rxbuffer, txbuffer,src_port, nbytes);
 	}
+}
+
+
+// Reset the addresses structure with default mac address and IP address
+void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports)
+{
+#ifndef SIMULATION
+
+  //retrieve the mac address
+	ethernet_getmac_otp(otp_ports.data, otp_ports.addr, otp_ports.ctrl, macAddr);
+#endif
+
+  //self assign an IP address
+  //TODO this is easier to find if it is defined in some header file
+  ip_addr[0] = 192;
+  ip_addr[1] = 168;
+  ip_addr[2] = 0;
+  ip_addr[3] = 254;
 }
