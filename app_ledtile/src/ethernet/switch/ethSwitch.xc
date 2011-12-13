@@ -20,6 +20,8 @@
 #include "ethernet_tx_client.h"
 #include "ethernet_rx_client.h"
 #include "getmac.h"
+#include "arp.h"
+#include "icmp.h"
 
 // ethSwitch
 // Layer 2 ethernet switch framework
@@ -35,5 +37,7 @@ void ethSwitch(chanend cExtRx, chanend cLocRx,
 
 	while (1) {
 		mac_rx(cExtRx, (rxbuffer, unsigned char[]), nbytes, src_port);
+		handle_arp_package(rxbuffer, txbuffer,src_port, nbytes);
+		handle_icmp_package(rxbuffer, txbuffer,src_port, nbytes);
 	}
 }

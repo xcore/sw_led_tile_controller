@@ -22,23 +22,23 @@
 #include "icmp.h"
 #include "ethernet_conf.h"
 #include "ethernet_tx_client.h"
+#include "checksum.h"
 
 void handle_icmp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
-		unsigned int nbytes) {
-	if (is_valid_icmp_packet(rxbuf, nbytes))
+		unsigned int nbytes, const unsigned char own_ip_addr[4], const unsigned char own_mac_addr[6]) {
+	if (is_valid_icmp_packet(rxbuf, nbytes, own_ip_addr))
 	      {
-	        build_icmp_response(rxbuf, (txbuf, unsigned char[]), own_mac_addr);
+	        build_icmp_response(rxbuf, txbuf, own_ip_addr, own_mac_addr);
 	        //todo is it a good idea to write out the package here, or should it be done centrally?
-	        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+	        //mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
 #ifdef ETHERNET_DEBUG_OUTPUT
 	        printstr("ICMP response sent\n");
 #endif
 	      }
 }
 
-int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_mac_addr[6])
+int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const unsigned char own_mac_addr[6])
 {
-  static const unsigned char own_ip_addr[4] = OWN_IP_ADDRESS;
   unsigned icmp_checksum;
   int datalen;
   int totallen;
@@ -111,9 +111,8 @@ int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsi
 }
 
 
-int is_valid_icmp_packet(const unsigned char rxbuf[], int nbytes)
+int is_valid_icmp_packet(const unsigned char rxbuf[], int nbytes, const unsigned char own_ip_addr[4])
 {
-  static const unsigned char own_ip_addr[4] = OWN_IP_ADDRESS;
   unsigned totallen;
 
 
