@@ -1,9 +1,18 @@
-/*
- * packet_helpers.h
+// Copyright (c) 2011, XMOS Ltd, All rights reserved
+// This software is freely distributable under a derivative of the
+// University of Illinois/NCSA Open Source License posted in
+// LICENSE.txt and at <http://github.xcore.com/>
+
+/*************************************************************************
  *
- *  Created on: 14.12.2011
- *      Author: marcus
- */
+ * Package helper library.
+ * Some helper functions for a fast packet analysis in mac_custom_filter
+ *
+ *************************************************************************
+ *
+ * Documentation & functional analysis still needed
+ *
+ *************************************************************************/
 
 #ifndef PACKET_HELPERS_H_
 #define PACKET_HELPERS_H_
