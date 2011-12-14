@@ -3,7 +3,4 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 
-unsigned int mac_custom_filter(unsigned int data[]) 
-{
-	return 1;
-}
+extern int mac_custom_filter(unsigned int data[]);

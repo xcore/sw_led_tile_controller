@@ -25,6 +25,7 @@
 #include "otp_data.h"
 #include "smi.h"
 #include "mii.h"
+#include "packet_helpers.h"
 
 #include "ethSwitch.h"
 #include "ethernet_conf.h"
@@ -33,15 +34,18 @@
 void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
 void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
 
+//some global variables
+//who are we
+int mac_addr[6];
+//for parallel usage we need two separate representations of the mac address
+int ethSwitch_mac_addr[6];
+unsigned char ip_address[4];
+
+
 void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out port ?p_mii_resetn,
 		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
 		mii_interface_t &mii1, struct otp_ports& otp_ports) {
 
-	//who are we
-	int mac_addr[6];
-	//for parallel usage we need two separate representations of the mac address
-	int ethSwitch_mac_addr[6];
-	unsigned char ip_address[4];
 	//and we need some channels to talk to the local server
 	chan rx[1], tx[1];
 
@@ -105,6 +109,31 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 		}
 	}
 }
+
+//custom-filter
+// it decides which packets belong to us and which not
+int mac_custom_filter(unsigned int data[]){
+	char addr[6];
+
+	addr[0] = mac_addr[0];
+	addr[1] = mac_addr[1];
+	addr[2] = mac_addr[2];
+	addr[3] = mac_addr[3];
+	addr[4] = mac_addr[4];
+	addr[5] = mac_addr[5];
+
+	if (is_broadcast((data,char[])) &&
+            is_ethertype((data,char[]), ethertype_arp)){
+		return 1;
+	}else if (is_mac_addr((data,char[]), addr) &&
+                  is_ethertype((data,char[]), ethertype_ip)){
+		return 1;
+	}
+
+	return 0;
+}
+//
+
 
 
 // Reset the addresses structure with default mac address and IP address
