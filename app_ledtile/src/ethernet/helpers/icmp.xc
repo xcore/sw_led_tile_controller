@@ -24,7 +24,7 @@
 #include "ethernet_tx_client.h"
 #include "checksum.h"
 
-void handle_icmp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+int handle_icmp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
 		unsigned int nbytes, const unsigned char own_ip_addr[4], const int own_mac_addr[6]) {
 	if (is_valid_icmp_packet(rxbuf, nbytes, own_ip_addr))
 	      {
@@ -33,7 +33,9 @@ void handle_icmp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[
 #ifdef ETHERNET_DEBUG_OUTPUT
 	        printstr("ICMP response sent\n");
 #endif
+	        return 1;
 	      }
+	return 0;
 }
 
 int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const int own_mac_addr[6])
