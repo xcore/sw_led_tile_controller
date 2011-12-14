@@ -24,12 +24,12 @@
 #include "ethernet_tx_client.h"
 #include "checksum.h"
 
-void handle_icmp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+void handle_icmp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
 		unsigned int nbytes, const unsigned char own_ip_addr[4], const int own_mac_addr[6]) {
 	if (is_valid_icmp_packet(rxbuf, nbytes, own_ip_addr))
 	      {
 	        build_icmp_response(rxbuf, txbuf, own_ip_addr, own_mac_addr);
-	        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+	        mac_tx(tx, (txbuf, unsigned int[]), nbytes, ETH_BROADCAST);
 #ifdef ETHERNET_DEBUG_OUTPUT
 	        printstr("ICMP response sent\n");
 #endif

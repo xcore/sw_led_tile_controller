@@ -27,6 +27,7 @@
 #include "mii.h"
 
 #include "ethSwitch.h"
+#include "ethernet_conf.h"
 
 //local prototypes
 void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
@@ -48,6 +49,23 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 	phy_init_two_port(clk_smi, p_mii_resetn, smi0, smi1, mii0, mii1);
 	//initialize the mac & ip addresses
 	initAddresses(mac_addr,ip_address,otp_ports);
+#ifdef ETHERNET_DEBUG_OUTPUT
+  printstr("Adresses initialized:\n");
+  printstr("MAC ");
+  for (int i=0; i<6;i++) {
+	  printhex((unsigned int)mac_addr[i]);
+	  printstr(" ");
+  }
+  printstr("\n");
+  printstr("IP ");
+  for (int i=0;i<4;i++) {
+	  printint(ip_address[i]);
+	  if (i<3) {
+		  printstr(".");
+	  }
+  }
+  printstr("\n");
+#endif
 	//copy over the mac address
 	for (int i=0; i <6; i++) {
 		ethSwitch_mac_addr[i] = mac_addr[i];
@@ -80,8 +98,8 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 
 	while (1) {
 		mac_rx(cExtRx, (rxbuffer, unsigned char[]), nbytes, src_port);
-		handle_arp_package((rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
-		handle_icmp_package((rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
+		handle_arp_package(cExtTx,(rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
+		handle_icmp_package(cExtTx, (rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
 	}
 }
 

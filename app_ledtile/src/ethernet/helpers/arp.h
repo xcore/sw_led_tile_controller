@@ -16,7 +16,7 @@
 #ifndef ARP_H
 #define ARP_H
 
-void handle_arp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+void handle_arp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
 unsigned int nbytes, const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
 int build_arp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
 int is_valid_arp_packet(const unsigned char rxbuf[], int nbytes, const unsigned char own_ip_addr[4]);
