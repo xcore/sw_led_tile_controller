@@ -29,8 +29,7 @@ void handle_icmp_package(unsigned char rxbuf[], unsigned char txbuf[],unsigned i
 	if (is_valid_icmp_packet(rxbuf, nbytes, own_ip_addr))
 	      {
 	        build_icmp_response(rxbuf, txbuf, own_ip_addr, own_mac_addr);
-	        //todo is it a good idea to write out the package here, or should it be done centrally?
-	        //mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+	        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
 #ifdef ETHERNET_DEBUG_OUTPUT
 	        printstr("ICMP response sent\n");
 #endif

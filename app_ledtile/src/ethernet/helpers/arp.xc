@@ -28,8 +28,7 @@ unsigned int nbytes, const unsigned char own_ip_addr[4], const int own_mac_addr[
     if (is_valid_arp_packet(rxbuf, nbytes, own_ip_addr))
       {
         build_arp_response(rxbuf, txbuf, own_ip_addr, own_mac_addr);
-        //TODO is that a good idea to have it here or should we rely on the fact that those functions just prepare the responses
-        //mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
+        mac_tx(tx, txbuf, nbytes, ETH_BROADCAST);
 #ifdef ETHERNET_DEBUG_OUTPUT
         printstr("ARP response sent\n");
 #endif
