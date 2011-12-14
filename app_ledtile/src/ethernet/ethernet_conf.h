@@ -6,6 +6,12 @@
 
 #define MAX_ETHERNET_PACKET_SIZE (1518)
 
+//this defines the initial IP address, split into 4 number - in the end it will be INITIAL_IP_0.INITIAL_IP_1.INITIAL_IP_2.INITIAL_IP_3
+#define INITIAL_IP_0 192
+#define INITIAL_IP_1 168
+#define INITIAL_IP_2 0
+#define INITIAL_IP_3 254
+
 #define NUM_MII_RX_BUF 20
 #define NUM_MII_TX_BUF 2
 

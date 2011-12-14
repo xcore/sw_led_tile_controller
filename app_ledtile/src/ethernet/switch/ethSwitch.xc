@@ -115,8 +115,8 @@ void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& ot
 
   //self assign an IP address
   //TODO this is easier to find if it is defined in some header file
-  ip_addr[0] = 192;
-  ip_addr[1] = 168;
-  ip_addr[2] = 0;
-  ip_addr[3] = 254;
+  ip_addr[0] = INITIAL_IP_0;
+  ip_addr[1] = INITIAL_IP_1;
+  ip_addr[2] = INITIAL_IP_2;
+  ip_addr[3] = INITIAL_IP_3;
 }
