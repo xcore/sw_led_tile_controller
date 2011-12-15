@@ -30,6 +30,9 @@
 #include "ethSwitch.h"
 #include "ethernet_conf.h"
 
+//a simle switch to tur of the mac packet filtering for debug purpose
+#define MAC_DO_NOT_FILTER
+
 //local prototypes
 void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
 void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const char own_mac_addr[6]);
@@ -116,6 +119,9 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 //custom-filter
 // it decides which packets belong to us and which not
 int mac_custom_filter(unsigned int data[]){
+#ifdef MAC_DO_NOT_FILTER
+	return 1;
+#else
 	char addr[6];
 
 	addr[0] = mac_addr[0];
@@ -134,6 +140,7 @@ int mac_custom_filter(unsigned int data[]){
 	}
 
 	return 0;
+#endif
 }
 //
 

@@ -28,7 +28,7 @@ int is_ethertype(unsigned char data[], unsigned char type[]){
 int is_mac_addr(unsigned char data[], unsigned char addr[]){
 	for (int i=0;i<6;i++){
 #pragma xta label "sc_ethernet_is_mac_addr_1"
-#pragma xta command "add loop sc_ethernet_is_mac_addr_1 6"
+//#pragma xta command "add loop sc_ethernet_is_mac_addr_1 6"
           if (data[i] != addr[i]){
 			return 0;
 		}
@@ -41,7 +41,7 @@ int is_mac_addr(unsigned char data[], unsigned char addr[]){
 int is_broadcast(unsigned char data[]){
 	for (int i=0;i<6;i++){
 #pragma xta label "sc_ethernet_is_broadcast_1"
-#pragma xta command "add loop sc_ethernet_is_broadcast_1 6"
+//#pragma xta command "add loop sc_ethernet_is_broadcast_1 6"
           if (data[i] != 0xFF){
 			return 0;
 		}
