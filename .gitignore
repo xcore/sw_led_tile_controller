@@ -1,4 +1,5 @@
 */.build_*/*
+*/.build/*
 */bin/*
 *.o
 *.xe
@@ -7,6 +8,7 @@
 *.xi
 *.i
 *.a
-
-#mac stuff
-.DS_Store
+#do not check in depdendency files
+*.xc.d
+*.c.d
+*.s.d
