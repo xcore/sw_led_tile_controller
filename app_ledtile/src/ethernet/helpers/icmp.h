@@ -17,8 +17,8 @@
 #define ICMP_H_
 
 int handle_icmp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
-		unsigned int nbytes, const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
-int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
+		unsigned int nbytes, const unsigned char own_ip_addr[4], const char own_mac_addr[6]);
+int build_icmp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const char own_mac_addr[6]);
 int is_valid_icmp_packet(const unsigned char rxbuf[], int nbytes, const unsigned char own_ip_addr[4]);
 
 #endif /* ICMP_H_ */

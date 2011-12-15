@@ -31,14 +31,15 @@
 #include "ethernet_conf.h"
 
 //local prototypes
-void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const int own_mac_addr[6]);
+void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const char own_mac_addr[6]);
 
 //some global variables
 //who are we
-int mac_addr[6];
+char mac_addr[6];
 //for parallel usage we need two separate representations of the mac address
-int ethSwitch_mac_addr[6];
+int ethServer_mac_addr[2];
+char ethSwitch_mac_addr[6];
 unsigned char ip_address[4];
 
 
@@ -74,12 +75,14 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 	for (int i=0; i <6; i++) {
 		ethSwitch_mac_addr[i] = mac_addr[i];
 	}
+	//convert the mac address for the server
+	convertMACTo2IntVersion(mac_addr,ethServer_mac_addr);
 
 	//let's really start the servers
 	par
 	{
 		//the ethernet server
-		ethernet_server_two_port(mii0, mii1, mac_addr, rx, 1, tx, 1,
+		ethernet_server_two_port(mii0, mii1, ethServer_mac_addr, rx, 1, tx, 1,
 				smi0, smi1, null);
 		//and the local stuff
 		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, ip_address, ethSwitch_mac_addr);
@@ -92,7 +95,7 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const int own_mac_addr[6]) {
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const char own_mac_addr[6]) {
 	unsigned int rxbuffer[1600 / 4];
 	unsigned int txbuffer[1600 / 4];
 	unsigned int src_port;
@@ -137,7 +140,7 @@ int mac_custom_filter(unsigned int data[]){
 
 
 // Reset the addresses structure with default mac address and IP address
-void initAddresses(int macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports)
+void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports)
 {
 #ifndef SIMULATION
 
