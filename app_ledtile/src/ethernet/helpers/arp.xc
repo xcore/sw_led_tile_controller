@@ -23,7 +23,7 @@
 #include "ethernet_conf.h"
 #include "ethernet_tx_client.h"
 
-int handle_arp_package(chanend tx, unsigned char rxbuf[], unsigned char txbuf[],unsigned int src_port,
+int handle_arp_package(chanend tx, unsigned char rxbuf[], unsigned int txbuf[],unsigned int src_port,
 unsigned int nbytes, const unsigned char own_ip_addr[4], const char own_mac_addr[6]) {
     if (is_valid_arp_packet(rxbuf, nbytes, own_ip_addr))
       {
@@ -36,7 +36,9 @@ unsigned int nbytes, const unsigned char own_ip_addr[4], const char own_mac_addr
       }
     return 0;
 }
-int build_arp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsigned char own_ip_addr[4], const char own_mac_addr[6])
+
+
+int build_arp_response(unsigned char rxbuf[], unsigned int txbuf[], const unsigned char own_ip_addr[4], const unsigned char own_mac_addr[6])
 {
   unsigned word;
   unsigned char byte;
@@ -44,8 +46,8 @@ int build_arp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsig
   for (int i = 0; i < 6; i++)
     {
       byte = rxbuf[22+i];
-      txbuf[i] = byte;
-      txbuf[32 + i] = byte;
+      (txbuf, unsigned char[])[i] = byte;
+      (txbuf, unsigned char[])[32 + i] = byte;
     }
   word = (rxbuf, const unsigned[])[7];
   for (int i = 0; i < 4; i++)
@@ -54,25 +56,25 @@ int build_arp_response(unsigned char rxbuf[], unsigned char txbuf[], const unsig
       word >>= 8;
     }
 
-  txbuf[28] = own_ip_addr[0];
-  txbuf[29] = own_ip_addr[1];
-  txbuf[30] = own_ip_addr[2];
-  txbuf[31] = own_ip_addr[3];
+  (txbuf, unsigned char[])[28] = own_ip_addr[0];
+  (txbuf, unsigned char[])[29] = own_ip_addr[1];
+  (txbuf, unsigned char[])[30] = own_ip_addr[2];
+  (txbuf, unsigned char[])[31] = own_ip_addr[3];
 
   for (int i = 0; i < 6; i++)
   {
-    txbuf[22 + i] = own_mac_addr[i];
-    txbuf[6 + i] = own_mac_addr[i];
+    (txbuf, unsigned char[])[22 + i] = own_mac_addr[i];
+    (txbuf, unsigned char[])[6 + i] = own_mac_addr[i];
   }
-  (txbuf, unsigned int[])[3] = 0x01000608;
-  (txbuf, unsigned int[])[4] = 0x04060008;
-  txbuf[20] = 0x00;
-  txbuf[21] = 0x02;
+  txbuf[3] = 0x01000608;
+  txbuf[4] = 0x04060008;
+  (txbuf, unsigned char[])[20] = 0x00;
+  (txbuf, unsigned char[])[21] = 0x02;
 
   // Typically 48 bytes (94 for IPv6)
   for (int i = 42; i < 64; i++)
   {
-    txbuf[i] = 0x00;
+    (txbuf, unsigned char[])[i] = 0x00;
   }
 
   return 64;
@@ -85,39 +87,29 @@ int is_valid_arp_packet(const unsigned char rxbuf[], int nbytes, const unsigned 
   if (rxbuf[12] != 0x08 || rxbuf[13] != 0x06)
     return 0;
 
-#ifdef ETHERNET_DEBUG_OUTPUT
   printstr("ARP packet received\n");
-#endif
 
   if ((rxbuf, const unsigned[])[3] != 0x01000608)
   {
-#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid et_htype\n");
-#endif
     return 0;
   }
   if ((rxbuf, const unsigned[])[4] != 0x04060008)
   {
-#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Invalid ptype_hlen\n");
-#endif
     return 0;
   }
   if (((rxbuf, const unsigned[])[5] & 0xFFFF) != 0x0100)
   {
-#ifdef ETHERNET_DEBUG_OUTPUT
     printstr("Not a request\n");
-#endif
     return 0;
   }
   for (int i = 0; i < 4; i++)
   {
     if (rxbuf[38 + i] != own_ip_addr[i])
     {
-#ifdef ETHERNET_DEBUG_OUTPUT
-     printstr("Not for us\n");
-#endif
-     return 0;
+      printstr("Not for us\n");
+      return 0;
     }
   }
 
