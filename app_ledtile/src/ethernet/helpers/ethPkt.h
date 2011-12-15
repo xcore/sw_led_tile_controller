@@ -9,6 +9,7 @@
  * Build:   977cb8e0d3fefc67ac350c5f294ac65919b3ebdc
  * File:    ethPkt.h
  *
+ * This file contains packet and value definitions for most of the
  *
  **/                                   
 #ifndef __ETHPKT_H__
