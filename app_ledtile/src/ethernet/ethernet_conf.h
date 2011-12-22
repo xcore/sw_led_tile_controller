@@ -23,4 +23,4 @@
 #define ETHERNET_DEBUG_OUTPUT
 
 //a simle switch to turn of the mac packet filtering for debug purpose
-//#define MAC_DO_NOT_FILTER
+#define MAC_DO_NOT_FILTER
