@@ -105,7 +105,6 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 	while (1) {
 		int handled = 0;
 		mac_rx(cExtRx, rxbuffer, nbytes, src_port);
-	    printstr("packet\n");
 /*		handled = handle_arp_package(cExtTx,(rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
 		if (!handled) {
 			handled = handle_icmp_package(cExtTx, (rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
@@ -142,19 +141,11 @@ int mac_custom_filter(unsigned int data[]){
 #ifdef MAC_DO_NOT_FILTER
 	return 1;
 #else
-	char addr[6];
-
-	addr[0] = mac_addr[0];
-	addr[1] = mac_addr[1];
-	addr[2] = mac_addr[2];
-	addr[3] = mac_addr[3];
-	addr[4] = mac_addr[4];
-	addr[5] = mac_addr[5];
 
 	if (is_broadcast((data,char[])) &&
             is_ethertype((data,char[]), ethertype_arp)){
 		return 1;
-	}else if (is_mac_addr((data,char[]), addr) &&
+	}else if (is_mac_addr((data,char[]), (mac_address,char[])) &&
                   is_ethertype((data,char[]), ethertype_ip)){
 		return 1;
 	}
