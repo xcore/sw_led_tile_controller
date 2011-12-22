@@ -31,7 +31,7 @@
 #include "misc.h"
 #include "mbi5031.h"
 #include "otp_data.h"
-#include "ethSwitch.h"
+#include "ethLocalHandler.h"
 #include "ethServer.h"
 
 

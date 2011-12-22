@@ -27,7 +27,7 @@
 #include "mii.h"
 #include "packet_helpers.h"
 
-#include "ethSwitch.h"
+#include "ethLocalHandler.h"
 #include "ethernet_conf.h"
 
 
@@ -115,15 +115,24 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 		      {
 		        build_arp_response(rxbuffer, txbuffer, ip_address, own_mac_addr);
 		        mac_tx(cExtTx, txbuffer, nbytes, ETH_BROADCAST);
+#ifdef ETHERNET_DEBUG_OUTPUT
 		        printstr("ARP response sent\n");
+#endif
 		      }
 		  //::icmp_packet_check
 		    else if (is_valid_icmp_packet(rxbuffer, nbytes,ip_address))
 		      {
 		        build_icmp_response(rxbuffer, (txbuffer, unsigned char[]), ip_address, own_mac_addr);
 		        mac_tx(cExtTx, txbuffer, nbytes, ETH_BROADCAST);
+#ifdef ETHERNET_DEBUG_OUTPUT
 		        printstr("ICMP response sent\n");
+#endif
 		      }
+		    else {
+#ifdef ETHERNET_DEBUG_OUTPUT
+		    	printstr("unknown package\n");
+		    }
+#endif
 	}
 }
 
