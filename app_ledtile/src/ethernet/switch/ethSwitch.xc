@@ -33,14 +33,12 @@
 
 //local prototypes
 void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const char own_mac_addr[6]);
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4]);
 
 //some global variables
 //who are we
-char mac_addr[6];
-//for parallel usage we need two separate representations of the mac address
-int ethServer_mac_addr[2];
-char ethSwitch_mac_addr[6];
+//unsigned char own_mac_addr[6]; // MAC address on core 0
+int mac_address[2]; // MAC address on core 2
 unsigned char ip_address[4];
 
 
@@ -52,12 +50,12 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 	chan rx[1], tx[1];
 
 	//initialize the mac & ip addresses
-	initAddresses(mac_addr,ip_address,otp_ports);
+	initAddresses((mac_address,char[]),ip_address,otp_ports);
 #ifdef ETHERNET_DEBUG_OUTPUT
   printstr("Adresses initialized:\n");
   printstr("MAC ");
   for (int i=0; i<6;i++) {
-	  printhex((unsigned int)mac_addr[i]);
+	  printhex((unsigned int)(mac_address,char[])[i]);
 	  printstr(" ");
   }
   printstr("\n");
@@ -70,12 +68,6 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
   }
   printstr("\n");
 #endif
-	//copy over the mac address
-	for (int i=0; i <6; i++) {
-		ethSwitch_mac_addr[i] = mac_addr[i];
-	}
-	//convert the mac address for the server
-	convertMACTo2IntVersion(mac_addr,ethServer_mac_addr);
 
 	//initialize the networking interfaces
 	phy_init_two_port(clk_smi, p_mii_resetn, smi0, smi1, mii0, mii1);
@@ -84,10 +76,10 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 	par
 	{
 		//the ethernet server
-		ethernet_server_two_port(mii0, mii1, ethServer_mac_addr, rx, 1, tx, 1,
+		ethernet_server_two_port(mii0, mii1, mac_address, rx, 1, tx, 1,
 				smi0, smi1, null);
 		//and the local stuff
-		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, ip_address, ethSwitch_mac_addr);
+		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, ip_address);
 	}
 }
 
@@ -97,17 +89,22 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4], const char own_mac_addr[6]) {
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4]) {
 	unsigned char rxbuffer[1600];
 	unsigned int txbuffer[1600];
 	unsigned int src_port;
 	unsigned int nbytes;
+	unsigned char own_mac_addr[6];
+
+	  //::get-macaddr
+	  mac_get_macaddr(cExtTx, own_mac_addr);
+
 
 	mac_set_custom_filter(cExtRx, 0x1);
 
 	while (1) {
 		int handled = 0;
-		mac_rx(cExtRx, (rxbuffer, unsigned char[]), nbytes, src_port);
+		mac_rx(cExtRx, rxbuffer, nbytes, src_port);
 	    printstr("packet\n");
 /*		handled = handle_arp_package(cExtTx,(rxbuffer, unsigned char[]), (txbuffer, unsigned char[]),src_port, nbytes, own_ip_addr, own_mac_addr);
 		if (!handled) {
