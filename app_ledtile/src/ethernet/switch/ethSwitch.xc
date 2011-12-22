@@ -30,8 +30,6 @@
 #include "ethSwitch.h"
 #include "ethernet_conf.h"
 
-//a simle switch to tur of the mac packet filtering for debug purpose
-#define MAC_DO_NOT_FILTER
 
 //local prototypes
 void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
