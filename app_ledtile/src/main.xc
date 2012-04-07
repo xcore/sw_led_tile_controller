@@ -22,17 +22,26 @@
 
 
 #include "ledbuffer.h"
-#include "mbi5031.h"
-#include "led.h"
 #include "pktbuffer.h"
 #include "watchdog.h"
 #include "flashmanager.h"
 #include "ledprocess.h"
 #include "misc.h"
-#include "mbi5031.h"
+
 #include "otp_data.h"
 #include "ethLocalHandler.h"
 #include "ethServer.h"
+
+#include "led.h"
+#if defined MBI5031
+#include "mbi5031.h"
+#elif defined MBI5030
+#include "mbi5030.h"
+#elif defined MBI5026
+#include "mbi5026.h"
+#endif
+
+
 
 
 // Ethernet Ports and Clock Blocks
@@ -80,9 +89,9 @@ on stdcore[2]: smi_interface_t smi_1 = { PORT_ETH_MDIO_1, PORT_ETH_MDC_1, 0 };
 buffered out port:32 p_led_out_r0               = PORT_LED_OUT_R0;
 buffered out port:32 p_led_out_g0               = PORT_LED_OUT_G0;
 buffered out port:32 p_led_out_b0               = PORT_LED_OUT_B0;
-out port p_led_out_r1               			= PORT_LED_OUT_R1;
-out port p_led_out_g1               			= PORT_LED_OUT_G1;
-out port p_led_out_b1               			= PORT_LED_OUT_B1;
+buffered out port:32 p_led_out_r1            	= PORT_LED_OUT_R1;
+buffered out port:32 p_led_out_g1            	= PORT_LED_OUT_G1;
+buffered out port:32 p_led_out_b1            	= PORT_LED_OUT_B1;
 out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
 buffered out port:32 p_led_out_ltch             = PORT_LED_OUT_LATCH;
@@ -127,10 +136,26 @@ int main(void)
     
     //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
     //this needs to be done so taht each led driver can define & use the pins it wants to use
+#if defined MBI5031
     on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[0],
         p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_g1, p_led_out_b1,
         p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
         b_led_clk, b_led_data, b_led_gsclk, b_ref);
+#elif defined MBI5030
+    on stdcore[0]: leddrive_mbi5030(
+       		c_led_data_out, c_led_cmds_out, cWdog[0],
+           p_led_out_r0, p_led_out_g0, p_led_out_b0,
+           p_led_out_r1, p_led_out_g1, p_led_out_b1,
+           p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
+           b_led_clk, b_led_data, b_led_gsclk, b_ref);
+#elif defined MBI5026
+    on stdcore[0]: leddrive_mbi5026(
+          		c_led_data_out, c_led_cmds_out, cWdog[0],
+              p_led_out_r0, p_led_out_g0, p_led_out_b0,
+              p_led_out_r1, p_led_out_g1, p_led_out_b1,
+              p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
+              b_led_clk, b_led_data, b_led_gsclk, b_ref);
+#endif
     //the interface to the flash memory for config data
     on stdcore[0]: spiFlash(cSpiFlash, p_flash_miso, p_flash_ss, p_flash_clk, p_flash_mosi, b_flash_clk, b_flash_data);
     
