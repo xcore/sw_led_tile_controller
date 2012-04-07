@@ -13,7 +13,7 @@
  **/                                   
 #include <xs1.h>
 #include <print.h>
-#include <flashPhy.h>
+#include <flashphy.h>
 #include <otp.h>
 #include <support.h>
 #include <xclib.h>
