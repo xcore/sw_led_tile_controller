@@ -15,6 +15,8 @@
 #ifndef __ETHPKT_H__
 #define __ETHPKT_H__
 
+#include "ethernet_conf.h"
+
 // -------- A bunch of ethernet defines and typedefed structures -------
 
 #define SWITCH_LOCAL_BUFFER
@@ -44,7 +46,7 @@
 #define PROTO_UDP           17
 
 // Ethernet Defines
-#define ETH_FRAME_SIZE    1600
+#define ETH_FRAME_SIZE    MAX_ETHERNET_PACKET_SIZE
 #define MAC_SIZE            14
 #define IP_SIZE             20
 #define UDP_SIZE             8
@@ -60,7 +62,6 @@
 #define getShort(a) ((((a) & 0xFF) << 8) | (((a) & 0xFF00) >> 8))
 #define getWord(a) (byterev(a))
 
-#ifndef __XC__
 
 typedef struct
 {
@@ -117,8 +118,6 @@ typedef struct
   unsigned short ethertype;
   unsigned char payload[ETH_FRAME_SIZE - MAC_SIZE];
 } s_packetMac;
-
-#endif
 
 typedef struct
 {

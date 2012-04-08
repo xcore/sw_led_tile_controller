@@ -29,6 +29,7 @@
 
 #include "ethLocalHandler.h"
 #include "ethernet_conf.h"
+#include "ethApplicationServer.h"
 
 
 //local prototypes
@@ -127,6 +128,9 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 		        printstr("ICMP response sent\n");
 #endif
 		      }
+		    else if (isValidPacket((rxbuffer,s_packetMac),own_mac_addr, own_ip_addr)) {
+		    	printstr("knew it");
+		    }
 		    else {
 #ifdef ETHERNET_DEBUG_OUTPUT
 		    	printstr("unknown package\n");
