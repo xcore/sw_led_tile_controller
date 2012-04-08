@@ -29,7 +29,7 @@
 
 #include "ethLocalHandler.h"
 #include "ethernet_conf.h"
-#include "ethApplicationServer.h"
+#include "ethApplicationHandler.h"
 
 
 //local prototypes

@@ -5,7 +5,7 @@
  *      Author: marcus
  */
 
-#include "ethApplicationServer.h"
+#include "ethApplicationHandler.h"
 
 int isValidPacket(s_packetMac* incoming_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]) {
 	//currently we are only dealing with UDP packages (TFTP or data update UUDP packages marked by 'XMOS' in the header
