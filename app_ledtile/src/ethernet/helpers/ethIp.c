@@ -19,7 +19,7 @@
 // (Re:)Calculate UDP checksum
 void udpChecksum(s_packetUdp *u)
 {
-  u->checksum=0;
+  u->checksum=0; //TODO this is plain wrong - we should integrate something like http://www.netfor2.com/udpsum.htm
 }
 
 void setUdpSize(s_packet *p, int size)
