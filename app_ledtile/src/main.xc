@@ -80,9 +80,15 @@ on stdcore[2]: smi_interface_t smi_1 = { PORT_ETH_MDIO_1, PORT_ETH_MDC_1, 0 };
 buffered out port:32 p_led_out_r0               = PORT_LED_OUT_R0;
 buffered out port:32 p_led_out_g0               = PORT_LED_OUT_G0;
 buffered out port:32 p_led_out_b0               = PORT_LED_OUT_B0;
-out port p_led_out_r1               			= PORT_LED_OUT_R1;
-out port p_led_out_g1               			= PORT_LED_OUT_G1;
-out port p_led_out_b1               			= PORT_LED_OUT_B1;
+#ifdef MBI5031
+out port p_led_out_r1			      			= PORT_LED_OUT_R1;
+out port p_led_out_g1           			 	= PORT_LED_OUT_G1;
+out port p_led_out_b1			            	= PORT_LED_OUT_B1;
+#else
+buffered out port:32 p_led_out_r1            	= PORT_LED_OUT_R1;
+buffered out port:32 p_led_out_g1            	= PORT_LED_OUT_G1;
+buffered out port:32 p_led_out_b1            	= PORT_LED_OUT_B1;
+#endif
 out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
 buffered out port:32 p_led_out_ltch             = PORT_LED_OUT_LATCH;
@@ -102,7 +108,7 @@ buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 struct otp_ports otp = {OTP_DATA_PORT, OTP_ADDR_PORT, OTP_CTRL_PORT};
 
 //enable or disable the watchdog
-#define WATCHDOG_ENABLED 0
+#define WATCHDOG_ENABLED 1
 
 // Top level main
 int main(void)
