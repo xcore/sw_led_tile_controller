@@ -19,6 +19,7 @@
 #include "misc.h"
 #include "xmosAC.h"
 #include "localConfig.h"
+#include "ethIp.h"
 
 const char magicNumber[4] = { 'X', 'M', 'O', 'S' };
 
@@ -84,7 +85,6 @@ int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 	case (XMOS_DATA): {
 		// This is a LED data packet
 		unsigned char *ptr;
-		unsigned iptr;
 
 		// if not our IP, exit
 		if (memcmp(ip_packet->dest, own_ip_address, 4))
@@ -192,7 +192,7 @@ int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 		memcpy((void*) mac_packet->sourcemac, (void*) own_mac_address, 6);
 
 		ip_packet->ttl = 255;
-		setUdpSize(mac_packet, XMOS_SIZE + 1);
+		//setUdpSize(packet, XMOS_SIZE + 1);
 		//mac_packet->plen_b = 60;
 		udpChecksum(udp_packet);
 		ipChecksum(ip_packet);

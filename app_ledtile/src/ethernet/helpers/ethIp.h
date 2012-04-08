@@ -14,6 +14,8 @@
 #ifndef __ETHIP_H__
 #define __ETHIP_H__
 
+#include "ethPkt.h"
+
 // Ethernet IP / UDP Functions
 
 // (Re:)Calculate UDP checksum

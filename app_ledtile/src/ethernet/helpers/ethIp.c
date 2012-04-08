@@ -11,7 +11,7 @@
  *
  *
  **/                                   
-#include "ethPkt.h"
+#include "ethIp.h"
 
 // Ethernet IP / UDP Functions
 
