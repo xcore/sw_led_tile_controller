@@ -1,6 +1,8 @@
 /*
  * ethApplicationServer.h
  *
+ * Defines how the local server has to look in order to handle packages
+ *
  *  Created on: 22.12.2011
  *      Author: marcus
  */
@@ -20,6 +22,12 @@
  * Return: 0 if the package is not to be handled by the application code, anything else (e.g. -1) if it should be dispatched to the applicaiton code
  */
 int isValidPacket(s_packetMac* incoming_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+#else
+//those are the XC variants of the  above functions - they look a bit different to automatically handle th casting of the byte arrays to structs
+int isValidPacket(s_packetMac& incoming_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+#endif
+
+#ifndef __XC__
 /**
  * application specific package handler.
  * Only packages which are prefiltered by isValidPackage are dispatched to the local handling function - so a proper check can be omitted.
@@ -31,10 +39,7 @@ int isValidPacket(s_packetMac* incoming_packet, const unsigned char own_mac_addr
  *
  */
 int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
-
 #else
-//those are the XC variants of the  above functions - they look a bit different to automatically handle th casting of the byte arrays to structs
-int isValidPacket(s_packetMac& incoming_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
 extern int handlePacket(s_packetMac& mac_packet, s_packetMac& outgoing,const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
 
 #endif
