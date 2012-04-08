@@ -30,11 +30,12 @@
 #include "ethLocalHandler.h"
 #include "ethernet_conf.h"
 #include "ethApplicationHandler.h"
+#include "localConfig.h"
 
 
 //local prototypes
 void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4]);
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend led_buffer_chan, chanend led_cmd_chan, const unsigned char own_ip_addr[4]);
 
 //some global variables
 //who are we
@@ -43,7 +44,9 @@ int mac_address[2]; // MAC address on core 2
 unsigned char ip_address[4];
 
 
-void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out port ?p_mii_resetn,
+void startEthServer(chanend c_local_tx, chanend c_local_rx,
+		chanend led_buffer_chan, chanend led_cmd_chan,
+		clock clk_smi, out port ?p_mii_resetn,
 		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
 		mii_interface_t &mii1, struct otp_ports& otp_ports) {
 
@@ -80,7 +83,7 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 		ethernet_server_two_port(mii0, mii1, mac_address, rx, 1, tx, 1,
 				smi0, smi1, null);
 		//and the local stuff
-		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, ip_address);
+		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, led_buffer_chan, led_cmd_chan, ip_address);
 	}
 }
 
@@ -90,7 +93,7 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out p
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, const unsigned char own_ip_addr[4]) {
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend led_buffer_chan, chanend led_cmd_chan, const unsigned char own_ip_addr[4]) {
 	unsigned char rxbuffer[1600];
 	unsigned int txbuffer[1600];
 	unsigned int src_port;
@@ -176,4 +179,10 @@ void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& o
   ip_addr[1] = INITIAL_IP_1;
   ip_addr[2] = INITIAL_IP_2;
   ip_addr[3] = INITIAL_IP_3;
+}
+
+void setIpAddress(char ipAddr[4]) {
+	for (int i=0; i<4; i++) {
+		ip_address[i]=ipAddr[i];
+	}
 }

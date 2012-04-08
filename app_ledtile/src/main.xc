@@ -130,7 +130,9 @@ int main(void)
     // Threads constrained by I/O or latency requirements
 	//the internal 3 port ethernet switch
     on stdcore[2]: {
-    	startEthServer(c_local_tx,c_local_rx_in,clk_smi,p_mii_resetn,smi_0,smi_1,mii_0,mii_1,otp);
+    	startEthServer(c_local_tx,c_local_rx_in,
+    			c_led_data_in, c_led_cmds_in,
+    			clk_smi,p_mii_resetn,smi_0,smi_1,mii_0,mii_1,otp);
     }
 
     

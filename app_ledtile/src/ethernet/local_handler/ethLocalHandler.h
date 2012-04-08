@@ -15,9 +15,12 @@
 #ifndef __ETHPHY_H__
 #define __ETHPHY_H__
 
-void startEthServer(chanend c_local_tx, chanend c_local_rx, clock clk_smi, out port ?p_mii_resetn,
+void startEthServer(chanend c_local_tx, chanend c_local_rx,
+		chanend led_buffer_chan, chanend led_cmd_chan,
+		clock clk_smi, out port ?p_mii_resetn,
 		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
 		mii_interface_t &mii1, struct otp_ports& otp_ports);
+
 
 #endif /*__ETHPHY_H__*/
 

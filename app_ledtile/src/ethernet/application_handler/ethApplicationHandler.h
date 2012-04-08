@@ -41,9 +41,15 @@ int isValidPacket(s_packetMac& mac_packet, const unsigned char own_mac_address[]
  * Parameter own_ip_address: The local ip address if it is important for sending answers
  *
  */
-int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[],
+		chanend cTx,
+		chanend cLedBuffer, chanend cLedCmd,
+		chanend cFlash);
 #else
-extern int handlePacket(s_packetMac& mac_packet, s_packetMac& outgoing,const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+extern int handlePacket(s_packetMac& mac_packet, s_packetMac& outgoing,const unsigned char own_mac_address[], const unsigned char own_ip_address[],
+		chanend cTx,
+		chanend cLedBuffer, chanend ,
+		chanend cFlash);
 
 #endif
 
