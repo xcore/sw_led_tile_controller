@@ -22,17 +22,16 @@ void udpChecksum(s_packetUdp *u)
   u->checksum=0; //TODO this is plain wrong - we should integrate something like http://www.netfor2.com/udpsum.htm
 }
 
-void setUdpSize(s_packet *p, int size)
+void setUdpSize(s_packetMac *m, int size)
 {
-  s_packetMac *m;
   s_packetIp *i; 
   s_packetUdp *u;
   
-  m = (s_packetMac *)p->pdata;
   i = (s_packetIp *)m->payload;
   u = (s_packetUdp *)i->payload;
   
-  p->plen_b = MAC_SIZE + IP_SIZE + UDP_SIZE + size;
+  //TOOD are there any s_packets left??
+  //p->plen_b = MAC_SIZE + IP_SIZE + UDP_SIZE + size;
   i->length = getShort(IP_SIZE + UDP_SIZE + size);
   u->length = getShort(UDP_SIZE + size);
 }

@@ -22,7 +22,7 @@
 void udpChecksum(s_packetUdp *u);
 
 // Set UDP datagram size
-void setUdpSize(s_packet *p, int size);
+void setUdpSize(s_packetMac *m, int size);
 
 // (Re:)Calculate IP checksum
 void ipChecksum(s_packetIp *i);

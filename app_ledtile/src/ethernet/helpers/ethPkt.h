@@ -131,7 +131,7 @@ typedef struct
   unsigned timestamp;
   unsigned plen_b;
   unsigned pdata[ETH_FRAME_SIZE / 4];
-} s_packet;
+} s_packet; //TODO this seems not to be needed anymore
 
 #endif
 

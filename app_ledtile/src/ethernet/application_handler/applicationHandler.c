@@ -20,6 +20,7 @@
 #include "xmosAC.h"
 #include "localConfig.h"
 #include "ethIp.h"
+#include "ethernet_tx_client.h"
 
 const char magicNumber[4] = { 'X', 'M', 'O', 'S' };
 
@@ -27,8 +28,10 @@ const char magicNumber[4] = { 'X', 'M', 'O', 'S' };
 s_xmosAC xmosACdata;
 
 //local function definitions
+/* TODO disabled until we get a better understanding
 void sendACforwardPackets(s_packet *packet, s_addresses *addresses,
 		unsigned cTx);
+*/
 
 int isValidPacket(s_packetMac* mac_packet,
 		const unsigned char own_mac_address[],
@@ -178,10 +181,28 @@ int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 		}
 	}
 		break;
-	case (XMOS_AC_1):
+/* TODO autoconfiguration is far too complex - so let's start to see if we can get data into this at all - this should go into a different file!!
+	case (XMOS_AC_1): {
+		s_packetMac outgoing_packet;
+		//create pointers to the various parts of the package
+		s_packetIp *outgoing_ip_packet = (s_packetIp *) &outgoing_packet.payload;
+		//get the udp packet
+		s_packetUdp *outgoing_udp_packet = (s_packetUdp *) outgoing_ip_packet->payload;
+		//unwrap the XMOS packet
+		s_packetXmos *outgoing_xmos_packet = (s_packetXmos *) outgoing_udp_packet->payload;
+
+		//prepare the mac packet
+		memcpy((void*) &outgoing_packet.destmac, (void*) mac_packet->destmac, 6);
+		memcpy((void*) &outgoing_packet.sourcemac, (void*) own_mac_address, 6);
+		outgoing_packet.ethertype = ETHERTYPE_IP;
+
+		//prepare the ip packet
+		ipInit(outgoing_ip_packet);
+		ip_packet->ttl = 255;
+
 		// Broadcast AC_2 message, include our TTL of AC_1 message
-		xmos_packet->identifier = getShort(XMOS_AC_2);
-		xmos_packet->payload[0] = ip_packet->ttl;
+		outgoing_xmos_packet->identifier = getShort(XMOS_AC_2);
+		outgoing_xmos_packet->payload[0] = ip_packet->ttl;
 
 		xmosACdata.myCommandTTL = ip_packet->ttl;
 		xmosACdata.XstartFlag = 1;
@@ -189,15 +210,14 @@ int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 		xmosACdata.YstartFlag = 1;
 		xmosACdata.YendFlag = 1;
 
-		memcpy((void*) mac_packet->sourcemac, (void*) own_mac_address, 6);
 
-		ip_packet->ttl = 255;
-		//setUdpSize(packet, XMOS_SIZE + 1);
+		setUdpSize(&outgoing_packet, XMOS_SIZE + 1);
 		//mac_packet->plen_b = 60;
 		udpChecksum(udp_packet);
 		ipChecksum(ip_packet);
-		//TODO this is deprecated & has to be change
-		//ethPhyTx(cTx, packet, &null);
+		//TODO correct size? correct package?? correct interface??
+		mac_tx(cTx, (char*) &outgoing_packet, MAC_SIZE+outgoing_ip_pacakge->size, ETH_BROADCAST);
+	}
 		break;
 	case (XMOS_AC_2):
 		// If we think we are at the beginning of this chain
@@ -251,11 +271,11 @@ int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 			//sendACforwardPackets(packet, addresses, cTx);
 		}
 		break;
+*/ //TODO end of to be converted auto configure stuff
 	}
-
-	return 0;
+	return -1;
 }
-
+/*
 void sendACforwardPackets(s_packet *packet, s_addresses *addresses,
 		unsigned cTx) {
 	s_packetMac *m;
@@ -295,3 +315,4 @@ void sendACforwardPackets(s_packet *packet, s_addresses *addresses,
 		x->payload[6]--;
 	}
 }
+*/
