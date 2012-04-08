@@ -76,14 +76,5 @@ typedef struct
   unsigned short identifier;
   unsigned char  payload[ETH_FRAME_SIZE - MAC_SIZE - IP_SIZE - UDP_SIZE - 6];
 } s_packetXmos;
-// --------------------------
-
-// ethOtherProcess
-// Called by base ethernet server when "OTHER" is defined and packet does not match other protocols
-#ifdef __XC__
-void ethOtherProcess(s_packet &packet, chanend cTx, chanend cOther0, chanend cOther1, chanend cOther2, s_addresses &addresses, int direction);
-#else
-void ethOtherProcess(s_packet *packet, unsigned cTx, unsigned cOther0, unsigned cOther1, unsigned cOther2, s_addresses *addresses, int direction);
-#endif
 
 #endif /*ETHOTHER_H_*/
