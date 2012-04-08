@@ -11,23 +11,15 @@
  *
  *
  **/                                   
-#ifndef ETHOTHER_H_
-#define ETHOTHER_H_
+#ifndef AAPLICATION_PACKET_H
+#define AAPLICATION_PACKET_H
 
-#include "ethPkt.h"
-#include "led.h"
 // ---------
 
 // Structures for XMOS packets
 // --------------------------
 #define OTHER
 #define XMOS_SIZE 6
-
-typedef struct
-{
-  unsigned char macPrefix[6];
-  unsigned char ipPrefix[4];
-} s_packetMacSet;
 
 typedef struct
 {
@@ -77,4 +69,4 @@ typedef struct
   unsigned char  payload[ETH_FRAME_SIZE - MAC_SIZE - IP_SIZE - UDP_SIZE - 6];
 } s_packetXmos;
 
-#endif /*ETHOTHER_H_*/
+#endif /*AAPLICATION_PACKET_H*/
