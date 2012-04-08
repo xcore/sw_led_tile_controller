@@ -81,13 +81,13 @@ buffered out port:32 p_led_out_r0               = PORT_LED_OUT_R0;
 buffered out port:32 p_led_out_g0               = PORT_LED_OUT_G0;
 buffered out port:32 p_led_out_b0               = PORT_LED_OUT_B0;
 #ifdef MBI5031
-out port p_led_out_r1			      			= PORT_LED_OUT_R1;
-out port p_led_out_g1           			 	= PORT_LED_OUT_G1;
-out port p_led_out_b1			            	= PORT_LED_OUT_B1;
+out port p_led_out_r1                           = PORT_LED_OUT_R1;
+out port p_led_out_g1                           = PORT_LED_OUT_G1;
+out port p_led_out_b1                           = PORT_LED_OUT_B1;
 #else
-buffered out port:32 p_led_out_r1            	= PORT_LED_OUT_R1;
-buffered out port:32 p_led_out_g1            	= PORT_LED_OUT_G1;
-buffered out port:32 p_led_out_b1            	= PORT_LED_OUT_B1;
+buffered out port:32 p_led_out_r1               = PORT_LED_OUT_R1;
+buffered out port:32 p_led_out_g1               = PORT_LED_OUT_G1;
+buffered out port:32 p_led_out_b1               = PORT_LED_OUT_B1;
 #endif
 out port p_led_out_addr                         = PORT_LED_OUT_ADDR;
 buffered out port:32 p_led_out_clk              = PORT_LED_OUT_CLK;
