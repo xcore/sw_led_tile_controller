@@ -39,8 +39,6 @@
 #define XMOS_CHANGEDRIVER        0x0D
 #define XMOS_DSPADJ              0x0E
 
-// XMOS Packets come in on this port
-#define PORT_XMOS          306
 //#define PER_PIXEL_ADJUSTMENT
 
 /*
