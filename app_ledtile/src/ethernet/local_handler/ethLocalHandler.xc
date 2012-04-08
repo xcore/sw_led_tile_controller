@@ -131,8 +131,8 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 		    else if (isValidPacket((rxbuffer,s_packetMac),own_mac_addr, own_ip_addr)) {
 		    	printstr("knew it");
 		    }
-		    else {
 #ifdef ETHERNET_DEBUG_OUTPUT
+		    else {
 		    	printstr("unknown package\n");
 		    }
 #endif
