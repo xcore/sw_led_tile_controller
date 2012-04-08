@@ -11,6 +11,9 @@
 #define ETHAPPLICATIONSERVER_H_
 #include "ethPkt.h"
 
+// XMOS Packets come in on this port
+#define PORT_XMOS          306
+
 #ifndef __XC__
 /**
  * TODO: correct documentation format
