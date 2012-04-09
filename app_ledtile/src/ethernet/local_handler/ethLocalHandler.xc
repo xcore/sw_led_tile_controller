@@ -35,7 +35,7 @@
 
 //local prototypes
 void initAddresses(char macAddr[], unsigned char ip_addr[4], struct otp_ports& otp_ports);
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend led_buffer_chan, chanend led_cmd_chan, const unsigned char own_ip_addr[4]);
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend cLedBuffer, chanend cLedCmd, chanend cFlash, const unsigned char own_ip_addr[4]);
 
 //some global variables
 //who are we
@@ -45,7 +45,8 @@ unsigned char ip_address[4];
 
 
 void startEthServer(chanend c_local_tx, chanend c_local_rx,
-		chanend led_buffer_chan, chanend led_cmd_chan,
+		chanend cLedBuffer, chanend cLedCmd,
+		chanend cFlash,
 		clock clk_smi, out port ?p_mii_resetn,
 		smi_interface_t &smi0, smi_interface_t &smi1, mii_interface_t &mii0,
 		mii_interface_t &mii1, struct otp_ports& otp_ports) {
@@ -83,7 +84,7 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx,
 		ethernet_server_two_port(mii0, mii1, mac_address, rx, 1, tx, 1,
 				smi0, smi1, null);
 		//and the local stuff
-		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, led_buffer_chan, led_cmd_chan, ip_address);
+		ethSwitch(rx[0], c_local_rx, tx[0], c_local_tx, cLedBuffer, cLedCmd, cFlash, ip_address);
 	}
 }
 
@@ -93,9 +94,9 @@ void startEthServer(chanend c_local_tx, chanend c_local_rx,
 // Layer 2 ethernet switch framework
 // Supports two external interfaces, and one local
 #pragma unsafe arrays
-void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend led_buffer_chan, chanend led_cmd_chan, const unsigned char own_ip_addr[4]) {
-	unsigned char rxbuffer[1600];
-	unsigned int txbuffer[1600];
+void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, chanend cLedBuffer, chanend cLedCmd, chanend cFlash, const unsigned char own_ip_addr[4]) {
+	unsigned char rxbuffer[ETH_FRAME_SIZE];
+	unsigned int txbuffer[ETH_FRAME_SIZE];
 	unsigned int src_port;
 	unsigned int nbytes;
 	unsigned char own_mac_addr[6];
@@ -132,7 +133,10 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 #endif
 		      }
 		    else if (isValidPacket((rxbuffer,s_packetMac),own_mac_addr, own_ip_addr)) {
-		    	printstr("knew it");
+#ifdef ETHERNET_DEBUG_OUTPUT
+		    	printstr("application packet");
+		    	handlePacket((rxbuffer,s_packetMac),(txbuffer,s_packetMac),own_mac_addr,own_ip_addr,cLocTx,cLedBuffer,cLedCmd, cFlash);
+#endif
 		    }
 #ifdef ETHERNET_DEBUG_OUTPUT
 		    else {

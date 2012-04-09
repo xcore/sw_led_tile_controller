@@ -132,6 +132,7 @@ int main(void)
     on stdcore[2]: {
     	startEthServer(c_local_tx,c_local_rx_in,
     			c_led_data_in, c_led_cmds_in,
+    			cSpiFlash,
     			clk_smi,p_mii_resetn,smi_0,smi_1,mii_0,mii_1,otp);
     }
 
