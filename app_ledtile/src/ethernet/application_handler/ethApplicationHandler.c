@@ -8,6 +8,7 @@
 #include <string.h>
 #include <xs1.h>
 #include <xccompat.h>
+#include <print.h>
 
 #include "ethApplicationHandler.h"
 #include "ethPkt.h"
@@ -33,7 +34,7 @@ void sendACforwardPackets(s_packet *packet, s_addresses *addresses,
 		unsigned cTx);
 */
 
-int isValidPacket(s_packetMac* mac_packet,
+int isValidAppPacket(s_packetMac* mac_packet,
 		const unsigned char own_mac_address[],
 		const unsigned char own_ip_address[]) {
 
@@ -65,7 +66,7 @@ int isValidPacket(s_packetMac* mac_packet,
 	return 0;
 }
 
-int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
+int handleAppPacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet,
 		const unsigned char own_mac_address[],
 		const unsigned char own_ip_address[], chanend cTx, chanend cLedBuffer,
 		chanend cLedCmd, chanend cFlash) {

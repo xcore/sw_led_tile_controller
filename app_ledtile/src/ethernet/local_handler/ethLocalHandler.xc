@@ -132,10 +132,10 @@ void ethSwitch(chanend cExtRx, chanend cLocRx, chanend cExtTx, chanend cLocTx, c
 		        printstr("ICMP response sent\n");
 #endif
 		      }
-		    else if (isValidPacket((rxbuffer,s_packetMac),own_mac_addr, own_ip_addr)) {
+		    else if (isValidAppPacket((rxbuffer,s_packetMac),own_mac_addr, own_ip_addr)) {
 #ifdef ETHERNET_DEBUG_OUTPUT
-		    	printstr("application packet");
-		    	handlePacket((rxbuffer,s_packetMac),(txbuffer,s_packetMac),own_mac_addr,own_ip_addr,cLocTx,cLedBuffer,cLedCmd, cFlash);
+		    	printstr("application packet\n");
+		    	handleAppPacket((rxbuffer,s_packetMac),(txbuffer,s_packetMac),own_mac_addr,own_ip_addr,cLocTx,cLedBuffer,cLedCmd, cFlash);
 #endif
 		    }
 #ifdef ETHERNET_DEBUG_OUTPUT

@@ -24,10 +24,10 @@
  * Parameter own_ip_address: The local ip address if it is important for filtering
  * Return: 0 if the package is not to be handled by the application code, anything else (e.g. -1) if it should be dispatched to the applicaiton code
  */
-int isValidPacket(s_packetMac* mac_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+int isValidAppPacket(s_packetMac* mac_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
 #else
 //those are the XC variants of the  above functions - they look a bit different to automatically handle th casting of the byte arrays to structs
-int isValidPacket(s_packetMac& mac_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
+int isValidAppPacket(s_packetMac& mac_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[]);
 #endif
 
 #ifndef __XC__
@@ -41,12 +41,12 @@ int isValidPacket(s_packetMac& mac_packet, const unsigned char own_mac_address[]
  * Parameter own_ip_address: The local ip address if it is important for sending answers
  *
  */
-int handlePacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[],
+int handleAppPacket(s_packetMac* mac_packet, s_packetMac* outgoing_packet, const unsigned char own_mac_address[], const unsigned char own_ip_address[],
 		chanend cTx,
 		chanend cLedBuffer, chanend cLedCmd,
 		chanend cFlash);
 #else
-extern int handlePacket(s_packetMac& mac_packet, s_packetMac& outgoing,const unsigned char own_mac_address[], const unsigned char own_ip_address[],
+extern int handleAppPacket(s_packetMac& mac_packet, s_packetMac& outgoing,const unsigned char own_mac_address[], const unsigned char own_ip_address[],
 		chanend cTx,
 		chanend cLedBuffer, chanend ,
 		chanend cFlash);
