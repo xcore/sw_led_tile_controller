@@ -117,7 +117,7 @@ buffered out port:8 p_flash_mosi                = PORT_SPI_MOSI;
 struct otp_ports otp = {OTP_DATA_PORT, OTP_ADDR_PORT, OTP_CTRL_PORT};
 
 //enable or disable the watchdog
-#define WATCHDOG_ENABLED 1
+#define WATCHDOG_ENABLED 0
 
 // Top level main
 int main(void)
