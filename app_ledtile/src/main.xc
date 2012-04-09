@@ -145,26 +145,30 @@ int main(void)
     
     //TODO we must find a way to select the correct led driver at startup - perhaps from flash??
     //this needs to be done so taht each led driver can define & use the pins it wants to use
+    on stdcore[0]: {
+    	//for now it is enough to get some default values
+    	ledprocess_set_defaults(); //TODO this should be part of the ethernet application (loading from flash, if not useful initialize)
 #if defined MBI5031
-    on stdcore[0]: leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[0],
-        p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_g1, p_led_out_b1,
-        p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
-        b_led_clk, b_led_data, b_led_gsclk, b_ref);
+		leddrive_mbi5031(c_led_data_out, c_led_cmds_out, cWdog[0],
+			p_led_out_r0, p_led_out_g0, p_led_out_b0, p_led_out_g1, p_led_out_b1,
+			p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
+			b_led_clk, b_led_data, b_led_gsclk, b_ref);
 #elif defined MBI5030
-    on stdcore[0]: leddrive_mbi5030(
-       		c_led_data_out, c_led_cmds_out, cWdog[0],
-           p_led_out_r0, p_led_out_g0, p_led_out_b0,
-           p_led_out_r1, p_led_out_g1, p_led_out_b1,
-           p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
-           b_led_clk, b_led_data, b_led_gsclk, b_ref);
+		leddrive_mbi5030(
+				c_led_data_out, c_led_cmds_out, cWdog[0],
+			   p_led_out_r0, p_led_out_g0, p_led_out_b0,
+			   p_led_out_r1, p_led_out_g1, p_led_out_b1,
+			   p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
+			   b_led_clk, b_led_data, b_led_gsclk, b_ref);
 #elif defined MBI5026
-    on stdcore[0]: leddrive_mbi5026(
-          		c_led_data_out, c_led_cmds_out, cWdog[0],
-              p_led_out_r0, p_led_out_g0, p_led_out_b0,
-              p_led_out_r1, p_led_out_g1, p_led_out_b1,
-              p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
-              b_led_clk, b_led_data, b_led_gsclk, b_ref);
+		leddrive_mbi5026(
+					c_led_data_out, c_led_cmds_out, cWdog[0],
+				  p_led_out_r0, p_led_out_g0, p_led_out_b0,
+				  p_led_out_r1, p_led_out_g1, p_led_out_b1,
+				  p_led_out_addr, p_led_out_clk , p_led_out_ltch, p_led_out_oe ,
+				  b_led_clk, b_led_data, b_led_gsclk, b_ref);
 #endif
+    }
     //the interface to the flash memory for config data
     on stdcore[0]: spiFlash(cSpiFlash, p_flash_miso, p_flash_ss, p_flash_clk, p_flash_mosi, b_flash_clk, b_flash_data);
     

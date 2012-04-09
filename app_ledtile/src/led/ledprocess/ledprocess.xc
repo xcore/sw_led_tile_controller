@@ -13,9 +13,10 @@
  **/                                   
 #include <xs1.h>
 #include <xclib.h>
+#include <print.h>
 #include "led.h"
 #include "ledprocess.h"
-#include "print.h"
+#include "gamma_lut_builder.h"
 
 //8 bit color intensity adjustements
 unsigned char intensityadjust[3] = {0xFF, 0xFF, 0xFF};
@@ -23,11 +24,15 @@ unsigned char intensityadjust[3] = {0xFF, 0xFF, 0xFF};
 unsigned short gammaLUT[3][256];
 
 #pragma unsafe arrays
-void ledprocess_init()
+void ledprocess_set_defaults()
 {
   // Init pixintensity
 	//TODO this is rubbish here. 1st it does not work 2nd this should be done in the aaplication or so, not the driver (see mbi5026)
 	//TODO may be this should be renamed to init-defaults and be a fall back if there is no applicaiton routine
+	//anyway we initialive the gamma lut for now
+	for (int c=0; c<3; c++) {
+		buildGammaLUT(gammaLUT[c]);
+	}
 #ifdef PER_PIXEL_ADJUSTMENT
   for (int i=0; i<(FRAME_HEIGHT*FRAME_WIDTH*3); i++)
   {

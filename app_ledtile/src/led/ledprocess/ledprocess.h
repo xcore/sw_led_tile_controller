@@ -42,6 +42,18 @@
 //#define PER_PIXEL_ADJUSTMENT
 
 /*
+ * Routine to add defaults values to the GAMMA LUT and the per pixel adjustement values, if configured.
+ * This routine is very slow due to the gamma calculation. And it should only be called from your applicaiton as last resort.
+ * Normally you would store tha gamma (and if configured the per pixel adjustements in flash). How this is handled in your application
+ * is part of the application.
+ */
+#ifdef __XC__
+void ledprocess_set_defaults();
+#else
+void ledprocess_set_defaults();
+#endif
+
+/*
  * COLOUR PROCESSING
  *
  * Colour processing of pixel data. Receives pixel data and commands from the
@@ -53,10 +65,8 @@
  * cOut - Streaming bidirectional pixel output
  */
 #ifdef __XC__
-void ledprocess_init();
 int ledprocess_commands(streaming chanend cLedCmd, streaming chanend cOut, int oeen);
 #else
-void ledprocess_init();
 int ledprocess_commands(unsigned cLedCmd, unsigned cOut, int oeen);
 #endif
 
