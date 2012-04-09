@@ -26,6 +26,8 @@ unsigned short gammaLUT[3][256];
 void ledprocess_init()
 {
   // Init pixintensity
+	//TODO this is rubbish here. 1st it does not work 2nd this should be done in the aaplication or so, not the driver (see mbi5026)
+	//TODO may be this should be renamed to init-defaults and be a fall back if there is no applicaiton routine
 #ifdef PER_PIXEL_ADJUSTMENT
   for (int i=0; i<(FRAME_HEIGHT*FRAME_WIDTH*3); i++)
   {
