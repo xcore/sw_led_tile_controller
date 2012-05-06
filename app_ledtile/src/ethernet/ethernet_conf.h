@@ -20,7 +20,7 @@
 #define NUM_ETHERNET_PORTS (2)
 
 //the chattyness of the helper functions
-#define ETHERNET_DEBUG_OUTPUT
+//#define ETHERNET_DEBUG_OUTPUT
 
 //a simle switch to turn of the mac packet filtering for debug purpose
 //#define MAC_DO_NOT_FILTER
